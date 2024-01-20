@@ -1,6 +1,6 @@
 import datetime
 import motor.motor_asyncio
-from info import BOT_USERNAME, DATABASE_URL
+from configs import Config
 
 class Database:
 
@@ -78,4 +78,4 @@ class Database:
         banned_users = self.col.find({'ban_status.is_banned': True})
         return banned_users
 
-db = Database(DATABASE_URL, BOT_USERNAME)
+db = Database(Config.DATABASE_URL, Config.BOT_USERNAME)
