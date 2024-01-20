@@ -1,42 +1,19 @@
-# (c) @TeleRoidGroup || @PredatorHackerzZ
-
 import os
 import asyncio
 import traceback
-from binascii import (
-    Error
-)
-from pyrogram import (
-    Client,
-    enums,
-    filters
-)
-from pyrogram.errors import (
-    UserNotParticipant,
-    FloodWait,
-    QueryIdInvalid
-)
-from pyrogram.types import (
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    CallbackQuery,
-    Message
-)
+from binascii import Error
+from pyrogram import Client, enums, filters
+from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
 from configs import Config
 from handlers.database import db
 from handlers.add_user_to_db import add_user_to_database
 from handlers.send_file import send_media_and_reply
 from handlers.helpers import b64_to_str, str_to_b64
 from handlers.check_user_status import handle_user_status
-from handlers.force_sub_handler import (
-    handle_force_sub,
-    get_invite_link
-)
+from handlers.force_sub_handler import handle_force_sub, get_invite_link
 from handlers.broadcast_handlers import main_broadcast_handler
-from handlers.save_media import (
-    save_media_in_channel,
-    save_batch_media_in_channel
-)
+from handlers.save_media import save_media_in_channel, save_batch_media_in_channel, get_short
 
 MediaList = {}
 
@@ -236,7 +213,6 @@ async def ban(c: Client, m: Message):
             quote=True
         )
 
-
 @Bot.on_message(filters.private & filters.command("unban_user") & filters.user(Config.BOT_OWNER))
 async def unban(c: Client, m: Message):
 
@@ -300,12 +276,22 @@ async def _banned_users(_, m: Message):
         return
     await m.reply_text(reply_text, True)
 
+@Client.on_message(filters.command('set_shortner'))
+async def save_shortlink(client, message):
+    userid = message.from_user.id
+    try:
+        _, url, api = message.text.split(" ", 2)
+    except ValueError:
+        return await message.reply_text("<b>Command Incomplete:-\n\ngive me a shortlink & api along with the command...\n\nEx:- <code>/shortlink mdisklink.link 5843c3cc645f5077b2200a2c77e0344879880b3e</code>")   
+    user_data = {'url': url, 'api': api}
+    await db.update_user_info(userid, user_data)
+    shortened_url = get_short(url, api, generate_random_alphanumeric())    
+    await message.reply_text(f"Successfully set shortlink\n\nURL - {url}\nAPI - {api}\nShortened URL - {shortened_url}")
 
 @Bot.on_message(filters.private & filters.command("clear_batch"))
 async def clear_user_batch(bot: Client, m: Message):
     MediaList[f"{str(m.from_user.id)}"] = []
     await m.reply_text("Cleared your batch files successfully!")
-
 
 @Bot.on_callback_query()
 async def button(bot: Client, cmd: CallbackQuery):
