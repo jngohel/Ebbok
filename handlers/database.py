@@ -1,7 +1,6 @@
 import datetime
 import motor.motor_asyncio
-from configs import Config
-
+from info import BOT_USERNAME, DATABASE_URL
 
 class Database:
 
@@ -25,6 +24,12 @@ class Database:
     async def add_user(self, id):
         user = self.new_user(id)
         await self.col.insert_one(user)
+
+    async def update_user_info(user_id, value:dict):
+        user_id = int(user_id)
+        my_query = {"user_id": user_id}
+        new_value = { "$set": value }
+        await self.col.update_one(my_query, new_value)
 
     async def is_user_exist(self, id):
         user = await self.col.find_one({'id': int(id)})
@@ -73,5 +78,4 @@ class Database:
         banned_users = self.col.find({'ban_status.is_banned': True})
         return banned_users
 
-
-db = Database(Config.DATABASE_URL, Config.BOT_USERNAME)
+db = Database(DATABASE_URL, BOT_USERNAME)
