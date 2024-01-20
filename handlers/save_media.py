@@ -19,12 +19,18 @@ def generate_random_alphanumeric():
     return random_chars
 
 def get_short(url, api, link):
-    rget = requests.get(f"https://{url}/api?api={api}&url={link}&alias={generate_random_alphanumeric()}")
+    if url and api:
+        rget = requests.get(f"https://{url}/api?api={api}&url={link}&alias={generate_random_alphanumeric()}")
+        rjson = rget.json()
+        if rjson["status"] == "success" or rget.status_code == 200:
+            return rjson["shortenedUrl"]
+    default_url = Config.SHORTLINK_URL
+    default_api = Config.SHORTLINK_API
+    rget = requests.get(f"https://{default_url}/api?api={default_api}&url={link}&alias={generate_random_alphanumeric()}")
     rjson = rget.json()
     if rjson["status"] == "success" or rget.status_code == 200:
         return rjson["shortenedUrl"]
-    else:
-        return link
+    return link
     
 async def forward_to_channel(bot: Client, message: Message, editable: Message):
     try:
@@ -64,7 +70,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
             ]])
         )
         share_link = f"https://telegram.me/{Config.BOT_USERNAME}?start=VJBotz_{str_to_b64(str(SaveMessage.id))}"
-        short_link = get_short(share_link)
+        short_link = get_short(url, api, share_link)
         await editable.edit(
             f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: <code>{short_link}</code> \n\n"
             f"Just Click the link to get your files!",
@@ -103,7 +109,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             f"#PRIVATE_FILE:\n\n[{message.from_user.first_name}](tg://user?id={message.from_user.id}) Got File Link!",
             disable_web_page_preview=True)
         share_link = f"https://telegram.me/{Config.BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
-        short_link = get_short(share_link)
+        short_link = get_short(url, api, share_link)
         await editable.edit(
             "**Your File Stored in my Database!**\n\n"
             f"Here is the Permanent Link of your file: <code>{short_link}</code> \n\n"
