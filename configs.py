@@ -3,8 +3,8 @@ import os
 class Config(object):
   API_ID = int(os.environ.get("API_ID", "12197477"))
   API_HASH = os.environ.get("API_HASH", "ac077d8acc256685720b14eba02d8d11")
-  BOT_TOKEN = os.environ.get("BOT_TOKEN", "6538189311:AAHfiUSm6hVzPJhj-kR117tmASOqLTy1plo")
-  BOT_USERNAME = os.environ.get("BOT_USERNAME", "@bug_aks_bot")
+  BOT_TOKEN = os.environ.get("BOT_TOKEN", "6144777379:AAHYgccuRRZRn-TT3_zBld4yQREDidoVke8")
+  BOT_USERNAME = os.environ.get("BOT_USERNAME", "@aks_file_store_bot")
   DB_CHANNEL = int(os.environ.get("DB_CHANNEL", "-1001768689210"))
   BOT_OWNER = int(os.environ.get("BOT_OWNER", "1030335104"))
   DATABASE_URL = os.environ.get("DATABASE_URL", "mongodb+srv://ttttechnicalaks7:filestorebotclone@cluster0.ch7domc.mongodb.net/?retryWrites=true&w=majority")
