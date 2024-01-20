@@ -18,14 +18,13 @@ def generate_random_alphanumeric():
     random_chars = ''.join(random.choice(characters) for _ in range(8))
     return random_chars
 
-def get_short(url):
-    rget = requests.get(f"https://{Config.SHORTLINK_URL}/api?api={Config.SHORTLINK_API}&url={url}&alias={generate_random_alphanumeric()}")
+def get_short(url, api, link):
+    rget = requests.get(f"https://{url}/api?api={api}&url={link}&alias={generate_random_alphanumeric()}")
     rjson = rget.json()
     if rjson["status"] == "success" or rget.status_code == 200:
         return rjson["shortenedUrl"]
     else:
-        return url
-
+        return link
     
 async def forward_to_channel(bot: Client, message: Message, editable: Message):
     try:
