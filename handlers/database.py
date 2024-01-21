@@ -21,6 +21,11 @@ class Database:
             )
         )
 
+    def generate_random_alphanumeric():
+        characters = string.ascii_letters + string.digits
+        random_chars = ''.join(random.choice(characters) for _ in range(8))
+        return random_chars
+
     async def add_user(self, id):
         user = self.new_user(id)
         await self.col.insert_one(user)
@@ -29,7 +34,7 @@ class Database:
         base_site = user["url"]
         api_key = user["api"]
         print(user)
-        response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}")
+        response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={generate_random_alphanumeric()}")
         data = response.json()
         if data["status"] == "success" or rget.status_code == 200:
             return data["shortenedUrl"]
