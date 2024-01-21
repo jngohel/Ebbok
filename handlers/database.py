@@ -39,7 +39,7 @@ class Database:
         if data["status"] == "success" or rget.status_code == 200:
             return data["shortenedUrl"]
 
-    async def get_user(user_id):
+    async def get_user(self, user_id):
         user_id = int(user_id)
         user = await self.col.find_one({"user_id": user_id})
         if not user:
@@ -52,7 +52,7 @@ class Database:
             user = await self.col.find_one({"user_id": user_id})
         return user
 
-    async def update_user_info(user_id, value:dict):
+    async def update_user_info(self, user_id, value:dict):
         user_id = int(user_id)
         my_query = {"user_id": user_id}
         new_value = { "$set": value }
