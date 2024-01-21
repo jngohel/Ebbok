@@ -52,11 +52,7 @@ async def handle_force_sub(bot: Client, cmd: Message):
             )
         )
         return 400
-    except Exception:
-        await bot.send_message(
-            chat_id=cmd.from_user.id,
-            text="Something went Wrong",
-            disable_web_page_preview=True
-        )
+    except Exception as e:
+        print(e)
         return 200
     return 200
