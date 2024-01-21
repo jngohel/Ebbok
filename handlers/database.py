@@ -42,7 +42,7 @@ class Database:
             api_key = SHORTENER_API
         response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={await self.generate_random_alphanumeric()}")
         data = response.json()
-        if data["status"] == "success" or rget.status_code == 200:
+        if data["status"] == "success" or data.status_code == 200:
             return data["shortenedUrl"]
 
     async def get_user(self, user_id):
