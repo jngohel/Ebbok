@@ -95,6 +95,9 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
                 continue
             message_ids_str += f"{str(sent_message.id)} "
             await asyncio.sleep(2)
+            msg = await editable.edit("<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>")
+            await asyncio.sleep(5)
+            await msg.delete()
         msg = await bot.send_message(
             chat_id=DB_CHANNEL,
             text=message_ids_str,
@@ -111,7 +114,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
         user = await db.get_user(user_id)
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(str(msg.id))}"
         short_link = await db.get_shortlink(user, share_link)
-        await editable.edit(
+        await editable.reply_text(
             f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: <code>{short_link}</code> \n\n"
             f"Just Click the link to get your files!",
             reply_markup=InlineKeyboardMarkup(
