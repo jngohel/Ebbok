@@ -27,16 +27,15 @@ async def forward_to_channel(bot: Client, message: Message, editable: Message):
 
 async def save_media_in_channel(bot: Client, editable: Message, message: Message):
     try:
-        forwarded_msg = await message.forward(DB_CHANNEL)
         file_er_id = str(forwarded_msg.id)
-        await forwarded_msg.reply_text(
-            f"#PRIVATE_FILE:\n\n[{message.from_user.first_name}](tg://user?id={message.from_user.id}) Got File Link!",
-            disable_web_page_preview=True)
+        msg = await editable.edit("<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>")
+        await asyncio.sleep(5)
+        await msg.delete()
         user_id = message.from_user.id
         user = await db.get_user(user_id)
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
         short_link = await db.get_shortlink(user, share_link)
-        await editable.edit(
+        await editable.reply_text(
             "**Your File Stored in my Database!**\n\n"
             f"Here is the Permanent Link of your file: <code>{short_link}</code> \n\n"
             "Just Click the link to get your file!",
