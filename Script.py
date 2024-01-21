@@ -4,4 +4,4 @@ class script(object):
 
 🚫 ɴᴏᴛᴇ -  ᴀᴅᴜʟᴛ ʀᴇꜱᴛʀɪᴄᴛᴇᴅ, ɪꜰ ʏᴏᴜ ʙʀᴇᴀᴋɪɴɢ ʀᴜʟᴇꜱ ᴛʜᴇɴ ʏᴏᴜ ᴡɪʟʟ ᴘᴇʀᴍᴀɴᴇɴᴛ ʙᴀɴ</b>"""
 
-  FEATURES = """<b>adding soon...</b>"""
+  FEATURES_TEXT = """<b>adding soon...</b>"""
