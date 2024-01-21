@@ -95,7 +95,7 @@ async def start(bot: Client, cmd: Message):
         except Exception as err:
             await cmd.reply_text(f"Something went wrong!\n\n**Error:** `{err}`")
 
-@Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(Config.DB_CHANNEL))
+@Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(DB_CHANNEL))
 async def main(bot: Client, message: Message):
     if message.chat.type == enums.ChatType.PRIVATE:
         await add_user_to_database(bot, message)
@@ -130,7 +130,7 @@ async def main(bot: Client, message: Message):
             pass
 
         try:
-            forwarded_msg = await message.forward(Config.DB_CHANNEL)
+            forwarded_msg = await message.forward(DB_CHANNEL)
             file_er_id = str(forwarded_msg.id)
             share_link = f"https://t.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
             CH_edit = await bot.edit_message_reply_markup(
