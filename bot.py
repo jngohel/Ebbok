@@ -2,10 +2,11 @@ import os
 import asyncio
 import traceback
 from binascii import Error
+from Script import script
 from pyrogram import Client, enums, filters
 from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
-from info import DB_CHANNEL, HOME_TEXT, UPDATES_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, ABOUT_DEV_TEXT, ABOUT_BOT_TEXT, BOT_OWNER, BANNED_CHAT_IDS
+from info import DB_CHANNEL, UPDATES_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS
 from handlers.database import db
 from handlers.add_user_to_db import add_user_to_database
 from handlers.send_file import send_media_and_reply
@@ -54,7 +55,7 @@ async def start(bot: Client, cmd: Message):
     if usr_cmd == "/start":
         await add_user_to_database(bot, cmd)
         await cmd.reply_text(
-            HOME_TEXT.format(cmd.from_user.first_name, cmd.from_user.id),
+            script.START_TEXT.format(cmd.from_user.first_name, cmd.from_user.id),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -170,7 +171,7 @@ async def main(bot: Client, message: Message):
 async def broadcast_handler_open(_, m: Message):
     await main_broadcast_handler(m, db)
 
-@Bot.on_message(filters.private & filters.command("status") & filters.user(BOT_OWNER))
+@Bot.on_message(filters.private & filters.command("stats") & filters.user(BOT_OWNER))
 async def sts(_, m: Message):
     total_users = await db.total_users_count()
     await m.reply_text(
@@ -286,7 +287,7 @@ async def button(bot: Client, cmd: CallbackQuery):
     cb_data = cmd.data
     if "aboutbot" in cb_data:
         await cmd.message.edit(
-            ABOUT_BOT_TEXT,
+            script.ABOUT_BOT_TEXT,
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -304,7 +305,7 @@ async def button(bot: Client, cmd: CallbackQuery):
 
     elif "aboutdevs" in cb_data:
         await cmd.message.edit(
-            ABOUT_DEV_TEXT,
+            script.ABOUT_DEV_TEXT,
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -322,7 +323,7 @@ async def button(bot: Client, cmd: CallbackQuery):
 
     elif "gotohome" in cb_data:
         await cmd.message.edit(
-            HOME_TEXT.format(cmd.message.chat.first_name, cmd.message.chat.id),
+            script.HOME_TEXT.format(cmd.message.chat.first_name, cmd.message.chat.id),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -379,7 +380,7 @@ async def button(bot: Client, cmd: CallbackQuery):
                 )
                 return
         await cmd.message.edit(
-            text=HOME_TEXT.format(cmd.message.chat.first_name, cmd.message.chat.id),
+            text=script.START_TEXT.format(cmd.message.chat.first_name, cmd.message.chat.id),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -435,7 +436,6 @@ async def button(bot: Client, cmd: CallbackQuery):
 
     elif "closeMessage" in cb_data:
         await cmd.message.delete(True)
-
     try:
         await cmd.answer()
     except QueryIdInvalid: pass
