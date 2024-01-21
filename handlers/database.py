@@ -43,7 +43,7 @@ class Database:
         gen = await self.generate_random_alphanumeric()
         response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={gen}")
         data = response.json()
-        if data["status"] == "success" or rget.status_code == 200:
+        if data["status"] == "success" or response.status_code == 200:
             return data["shortenedUrl"]
 
     async def get_user(self, user_id):
