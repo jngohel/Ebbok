@@ -1,6 +1,6 @@
 import asyncio
 from typing import Union
-from info import UPDATES_CHANNEL
+from info import AUTH_CHANNEL
 from pyrogram import Client
 from pyrogram.errors import FloodWait, UserNotParticipant
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
@@ -15,10 +15,10 @@ async def get_invite_link(bot: Client, chat_id: Union[str, int]):
         return await get_invite_link(bot, chat_id)
 
 async def handle_force_sub(bot: Client, cmd: Message):
-    if UPDATES_CHANNEL and UPDATES_CHANNEL.startswith("-100"):
-        channel_chat_id = int(UPDATES_CHANNEL)
-    elif UPDATES_CHANNEL and (not UPDATES_CHANNEL.startswith("-100")):
-        channel_chat_id = UPDATES_CHANNEL
+    if AUTH_CHANNEL and AUTH_CHANNEL.startswith("-100"):
+        channel_chat_id = int(AUTH_CHANNEL)
+    elif AUTH_CHANNEL and (not AUTH_CHANNEL.startswith("-100")):
+        channel_chat_id = AUTH_CHANNEL
     else:
         return 200
     try:
@@ -34,7 +34,7 @@ async def handle_force_sub(bot: Client, cmd: Message):
         try:
             invite_link = await get_invite_link(bot, chat_id=channel_chat_id)
         except Exception as err:
-            print(f"Unable to do Force Subscribe to {UPDATES_CHANNEL}\n\nError: {err}")
+            print(f"Unable to do Force Subscribe to {AUTH_CHANNEL}\n\nError: {err}")
             return 200
         await bot.send_message(
             chat_id=cmd.from_user.id,
@@ -46,7 +46,7 @@ async def handle_force_sub(bot: Client, cmd: Message):
                         InlineKeyboardButton("🤖 Join Updates Channel", url=invite_link.invite_link)
                     ],
                     [
-                        InlineKeyboardButton("🔄 Refresh 🔄", callback_data="refreshForceSub")
+                        InlineKeyboardButton("🔄 Refresh 🔄", callback_data="checksub")
                     ]
                 ]
             )
