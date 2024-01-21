@@ -277,16 +277,15 @@ async def _banned_users(_, m: Message):
     await m.reply_text(reply_text, True)
 
 @Client.on_message(filters.command('set_shortner'))
-async def save_shortlink(client, message):
-    userid = message.from_user.id
+async def set_shortlink(client, message):
+    user_id = message.from_user.id
     try:
         _, url, api = message.text.split(" ", 2)
     except ValueError:
         return await message.reply_text("<b>Command Incomplete:-\n\ngive me a shortlink & api along with the command...\n\nEx:- <code>/shortlink mdisklink.link 5843c3cc645f5077b2200a2c77e0344879880b3e</code>")   
-    user_data = {'url': url, 'api': api}
-    await db.update_user_info(userid, user_data)
-    shortened_url = get_short(url, api, generate_random_alphanumeric())    
-    await message.reply_text(f"Successfully set shortlink\n\nURL - {url}\nAPI - {api}\nShortened URL - {shortened_url}")
+    user_data = {'base_site': url, 'shortener_api': api}
+    await db.update_user_info(user_id, user_data)
+    await message.reply_text(f"<b>Successfully set shortlink\n\nURL - {url}\nAPI - <code>{api}</code></b>")
 
 @Bot.on_message(filters.private & filters.command("clear_batch"))
 async def clear_user_batch(bot: Client, m: Message):
