@@ -67,6 +67,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
                                                 InlineKeyboardButton("Short Link", url=share_link)]])
         )
     except Exception as err:
+        print(err)
         await editable.edit(f"Something Went Wrong!\n\n**Error:** `{err}`")
         await bot.send_message(
             chat_id=int(Config.LOG_CHANNEL),
@@ -118,6 +119,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             )
         await save_media_in_channel(bot, editable, message)
     except Exception as err:
+        print(err)
         await editable.edit(f"Something Went Wrong!\n\n**Error:** `{err}`")
         await bot.send_message(
             chat_id=int(Config.LOG_CHANNEL),
