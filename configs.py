@@ -10,7 +10,7 @@ class Config(object):
   SHORTENER_API = os.environ.get('SHORTENER_API', "e7beb3c8f756dfa15d0bec495abc65f58c0dfa95")
   BOT_OWNER = int(os.environ.get("BOT_OWNER", "1030335104"))
   DATABASE_URL = os.environ.get("DATABASE_URL", "mongodb+srv://ttttechnicalaks7:filestorebotclone@cluster0.ch7domc.mongodb.net/?retryWrites=true&w=majority")
-  UPDATES_CHANNEL = os.environ.get("UPDATES_CHANNEL", "Aksbackup")
+  UPDATES_CHANNEL = os.environ.get("UPDATES_CHANNEL", "-1001831955243")
   LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1001769642119"))
   BANNED_USERS = set(int(x) for x in os.environ.get("BANNED_USERS", "").split())
   FORWARD_AS_COPY = bool(os.environ.get("FORWARD_AS_COPY", True))
