@@ -1,6 +1,8 @@
 import datetime
 import motor.motor_asyncio
 from configs import Config
+import requests
+import json
 
 class Database:
 
@@ -30,7 +32,7 @@ class Database:
         user = self.new_user(id)
         await self.col.insert_one(user)
 
-    async def get_shortlink(user, link):
+    async def get_shortlink(self, user, link):
         base_site = user["base_site"]
         api_key = user["shortener_api"]
         print(user)
