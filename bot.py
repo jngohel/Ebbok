@@ -92,8 +92,8 @@ async def start(bot: Client, cmd: Message):
                 message_ids.append(int(GetMessage.id))
             for i in range(len(message_ids)):
                 await send_media_and_reply(bot, user_id=cmd.from_user.id, file_id=int(message_ids[i]))
-        except Exception as err:
-            await cmd.reply_text(f"Something went wrong!\n\n**Error:** `{err}`")
+        except Exception as e:
+            print(e)
 
 @Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(DB_CHANNEL))
 async def main(bot: Client, message: Message):
