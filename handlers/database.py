@@ -25,6 +25,28 @@ class Database:
         user = self.new_user(id)
         await self.col.insert_one(user)
 
+    async def get_shortlink(user, link):
+        base_site = user["url"]
+        api_key = user["api"]
+        print(user)
+        response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}")
+        data = response.json()
+        if data["status"] == "success" or rget.status_code == 200:
+            return data["shortenedUrl"]
+
+    async def get_user(user_id):
+        user_id = int(user_id)
+        user = await self.col.find_one({"user_id": user_id})
+        if not user:
+            res = {
+                "user_id": user_id,
+                "shortener_api": None,
+                "base_site": None,
+            }
+            await self.col.insert_one(res)
+            user = await self.col.find_one({"user_id": user_id})
+        return user
+
     async def update_user_info(user_id, value:dict):
         user_id = int(user_id)
         my_query = {"user_id": user_id}
