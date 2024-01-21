@@ -1,5 +1,5 @@
 import asyncio
-from configs import Config
+from info import DB_CHANNEL, LOG_CHANNEL, 
 from pyrogram import Client
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
@@ -8,13 +8,13 @@ from handlers.database import db
     
 async def forward_to_channel(bot: Client, message: Message, editable: Message):
     try:
-        __SENT = await message.forward(Config.DB_CHANNEL)
+        __SENT = await message.forward(DB_CHANNEL)
         return __SENT
     except FloodWait as sl:
         if sl.value > 45:
             await asyncio.sleep(sl.value)
             await bot.send_message(
-                chat_id=int(Config.LOG_CHANNEL),
+                chat_id=int(LOG_CHANNEL),
                 text=f"#FloodWait:\nGot FloodWait of `{str(sl.value)}s` from `{str(editable.chat.id)}` !!",
                 disable_web_page_preview=True,
                 reply_markup=InlineKeyboardMarkup(
@@ -27,7 +27,7 @@ async def forward_to_channel(bot: Client, message: Message, editable: Message):
 
 async def save_media_in_channel(bot: Client, editable: Message, message: Message):
     try:
-        forwarded_msg = await message.forward(Config.DB_CHANNEL)
+        forwarded_msg = await message.forward(DB_CHANNEL)
         file_er_id = str(forwarded_msg.id)
         await forwarded_msg.reply_text(
             f"#PRIVATE_FILE:\n\n[{message.from_user.first_name}](tg://user?id={message.from_user.id}) Got File Link!",
@@ -55,7 +55,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             print(f"Sleep of {sl.value}s caused by FloodWait ...")
             await asyncio.sleep(sl.value)
             await bot.send_message(
-                chat_id=int(Config.LOG_CHANNEL),
+                chat_id=int(LOG_CHANNEL),
                 text="#FloodWait:\n"
                      f"Got FloodWait of `{str(sl.value)}s` from `{str(editable.chat.id)}` !!",
                 disable_web_page_preview=True,
@@ -72,7 +72,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         print(err)
         await editable.edit(f"Something Went Wrong!\n\n**Error:** `{err}`")
         await bot.send_message(
-            chat_id=int(Config.LOG_CHANNEL),
+            chat_id=int(LOG_CHANNEL),
             text="#ERROR_TRACEBACK:\n"
                  f"Got Error from `{str(editable.chat.id)}` !!\n\n"
                  f"**Traceback:** `{err}`",
@@ -95,8 +95,8 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
                 continue
             message_ids_str += f"{str(sent_message.id)} "
             await asyncio.sleep(2)
-        SaveMessage = await bot.send_message(
-            chat_id=Config.DB_CHANNEL,
+        msg = await bot.send_message(
+            chat_id=DB_CHANNEL,
             text=message_ids_str,
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
@@ -109,7 +109,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
         )
         user_id = message.from_user.id
         user = await db.get_user(user_id)
-        share_link = f"https://telegram.me/{Config.BOT_USERNAME}?start=VJBotz_{str_to_b64(str(SaveMessage.id))}"
+        share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(str(msg.id))}"
         short_link = await db.get_shortlink(user, share_link)
         await editable.edit(
             f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: <code>{short_link}</code> \n\n"
@@ -125,7 +125,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
             disable_web_page_preview=True
         )
         await bot.send_message(
-            chat_id=int(Config.LOG_CHANNEL),
+            chat_id=int(LOG_CHANNEL),
             text=f"#BATCH_SAVE:\n\n[{editable.reply_to_message.from_user.first_name}](tg://user?id={editable.reply_to_message.from_user.id}) Got Batch Link!",
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
@@ -141,7 +141,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
         print(err)
         await editable.edit(f"Something Went Wrong!\n\n**Error:** `{err}`")
         await bot.send_message(
-            chat_id=int(Config.LOG_CHANNEL),
+            chat_id=int(LOG_CHANNEL),
             text=f"#ERROR_TRACEBACK:\nGot Error from `{str(editable.chat.id)}` !!\n\n**Traceback:** `{err}`",
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
