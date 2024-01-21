@@ -6,7 +6,7 @@ from Script import script
 from pyrogram import Client, enums, filters
 from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
-from info import DB_CHANNEL, UPDATES_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS
+from info import DB_CHANNEL, UPDATES_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK
 from handlers.database import db
 from handlers.add_user_to_db import add_user_to_database
 from handlers.send_file import send_media_and_reply
@@ -54,25 +54,17 @@ async def start(bot: Client, cmd: Message):
     usr_cmd = cmd.text.split("_", 1)[-1]
     if usr_cmd == "/start":
         await add_user_to_database(bot, cmd)
-        await cmd.reply_text(
-            script.START_TEXT.format(cmd.from_user.first_name, cmd.from_user.id),
+        btn = [[
+            InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ", url=UPDATES_CHANNEL_LINK)
+        ],[
+            InlineKeyboardButton("ꜱᴜᴘᴘᴏʀᴛ", url=SUPPORT_GROUP_LINK),
+            InlineKeyboardButton("🎲 ғᴇᴀᴛᴜʀᴇꜱ 🎲", callback_data="features")
+        ]]
+        reply_markup=InlineKeyboardMarkup(btn)
+        await cmd.message.edit(
+            script.START_TEXT,
             disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Updates Channel", url="https://t.me/VJ_Botz")
-                    ],
-                    [
-                        InlineKeyboardButton("About Bot", callback_data="aboutbot"),
-                        InlineKeyboardButton("About Dev", callback_data="aboutdevs"),
-                        InlineKeyboardButton("Close 🚪", callback_data="closeMessage")
-                    ],
-                    [
-                        InlineKeyboardButton("Support Group", url="https://t.me/VJ_Bot_Disscussion"),
-                        InlineKeyboardButton("YouTube Channel", url="https://youtube.com/@Tech_VJ")
-                    ]
-                ]
-            )
+            reply_markup=reply_markup
         )
     else:
         try:
@@ -285,65 +277,21 @@ async def clear_user_batch(bot: Client, m: Message):
 @Bot.on_callback_query()
 async def button(bot: Client, cmd: CallbackQuery):
     cb_data = cmd.data
-    if "aboutbot" in cb_data:
+    if "gotohome" in cb_data:
+        btn = [[
+            InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ", url=UPDATES_CHANNEL_LINK)
+        ],[
+            InlineKeyboardButton("ꜱᴜᴘᴘᴏʀᴛ", url=SUPPORT_GROUP_LINK),
+            InlineKeyboardButton("🎲 ғᴇᴀᴛᴜʀᴇꜱ 🎲", callback_data="features")
+        ]]
+        reply_markup=InlineKeyboardMarkup(btn)
         await cmd.message.edit(
-            script.ABOUT_BOT_TEXT,
+            script.START_TEXT,
             disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Source Codes of Bot",
-                                             url="https://youtube.com/@Tech_VJ")
-                    ],
-                    [
-                        InlineKeyboardButton("Go Home", callback_data="gotohome"),
-                        InlineKeyboardButton("About Dev", callback_data="aboutdevs")
-                    ]
-                ]
-            )
+            reply_markup=reply_markup
         )
 
-    elif "aboutdevs" in cb_data:
-        await cmd.message.edit(
-            script.ABOUT_DEV_TEXT,
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Source Codes of Bot",
-                                             url="https://youtube.com/@Tech_VJ")
-                    ],
-                    [
-                        InlineKeyboardButton("About Bot", callback_data="aboutbot"),
-                        InlineKeyboardButton("Go Home", callback_data="gotohome")
-                    ]
-                ]
-            )
-        )
-
-    elif "gotohome" in cb_data:
-        await cmd.message.edit(
-            script.HOME_TEXT.format(cmd.message.chat.first_name, cmd.message.chat.id),
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Updates Channel", url="https://t.me/VJ_Botz")
-                    ],
-                    [
-                        InlineKeyboardButton("About Bot", callback_data="aboutbot"),
-                        InlineKeyboardButton("About Dev", callback_data="aboutdevs"),
-                        InlineKeyboardButton("Close 🚪", callback_data="closeMessage")
-                    ],
-                    [
-                        InlineKeyboardButton("Support Group", url="https://t.me/VJ_Bot_Disscussion"),
-                        InlineKeyboardButton("YouTube Channel", url="https://youtube.com/@Tech_VJ")
-                    ]
-                ]
-            )
-        )
-
-    elif "refreshForceSub" in cb_data:
+    elif "checksub" in cb_data:
         if UPDATES_CHANNEL:
             if UPDATES_CHANNEL.startswith("-100"):
                 channel_chat_id = int(UPDATES_CHANNEL)
@@ -379,21 +327,17 @@ async def button(bot: Client, cmd: CallbackQuery):
                     disable_web_page_preview=True
                 )
                 return
+        btn = [[
+            InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ", url=UPDATES_CHANNEL_LINK)
+        ],[
+            InlineKeyboardButton("ꜱᴜᴘᴘᴏʀᴛ", url=SUPPORT_GROUP_LINK),
+            InlineKeyboardButton("🎲 ғᴇᴀᴛᴜʀᴇꜱ 🎲", callback_data="features")
+        ]]
+        reply_markup=InlineKeyboardMarkup(btn)
         await cmd.message.edit(
-            text=script.START_TEXT.format(cmd.message.chat.first_name, cmd.message.chat.id),
+            script.START_TEXT,
             disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Updates Channel", url="https://t.me/VJ_Botz"),
-                        InlineKeyboardButton("Support Group", url="https://t.me/VJ_Bot_Disscussion")
-                    ],
-                    [
-                        InlineKeyboardButton("About Bot", callback_data="aboutbot"),
-                        InlineKeyboardButton("About Dev", callback_data="aboutdevs")
-                    ]
-                ]
-            )
+            reply_markup=reply_markup
         )
 
     elif cb_data.startswith("ban_user_"):
