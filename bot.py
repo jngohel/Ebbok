@@ -25,6 +25,10 @@ Bot = Client(
     api_hash=API_HASH
 )
 
+async def start(self):
+    print('\n')
+    await self.send_message(chat_id=LOG_CHANNEL, text="<b>Restarted</b>")
+
 @Bot.on_message(filters.private)
 async def _(bot: Client, cmd: Message):
     await handle_user_status(bot, cmd)
