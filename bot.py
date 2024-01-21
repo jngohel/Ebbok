@@ -373,14 +373,14 @@ async def button(bot: Client, cmd: CallbackQuery):
         await cmd.message.edit("File Saved in Batch!\n\n"
                                "Press below button to get batch link.",
                                reply_markup=InlineKeyboardMarkup([
-                                   [InlineKeyboardButton("Get Batch Link", callback_data="get_batch")],
+                                   [InlineKeyboardButton("Get Batch Link", callback_data="getbatch")],
                                    [InlineKeyboardButton("Close Message", callback_data="closeMessage")]
                                ]))
 
     elif "sharable" in cb_data:
         await save_media_in_channel(bot, editable=cmd.message, message=cmd.message.reply_to_message)
 
-    elif "get_batch" in cb_data:
+    elif "getbatch" in cb_data:
         message_ids = MediaList.get(f"{str(cmd.from_user.id)}", None)
         if message_ids is None:
             await cmd.answer("Batch List Empty!", show_alert=True)
