@@ -373,7 +373,8 @@ async def button(bot: Client, cmd: CallbackQuery):
         await cmd.message.edit("File Saved in Batch!\n\n"
                                "Press below button to get batch link.",
                                reply_markup=InlineKeyboardMarkup([
-                                   [InlineKeyboardButton("Get Batch Link", callback_data="get_batch")]                                   [InlineKeyboardButton("Close Message", callback_data="closeMessage")]
+                                   [InlineKeyboardButton("Get Batch Link", callback_data="get_batch")],
+                                   [InlineKeyboardButton("Close Message", callback_data="closeMessage")]
                                ]))
 
     elif "sharable" in cb_data:
