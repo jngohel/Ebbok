@@ -2,6 +2,8 @@ import datetime
 import motor.motor_asyncio
 from configs import Config
 import requests
+import random
+import string
 import json
 
 class Database:
@@ -23,7 +25,7 @@ class Database:
             )
         )
 
-    def generate_random_alphanumeric():
+    async def generate_random_alphanumeric():
         characters = string.ascii_letters + string.digits
         random_chars = ''.join(random.choice(characters) for _ in range(8))
         return random_chars
@@ -36,7 +38,7 @@ class Database:
         base_site = user["base_site"]
         api_key = user["shortener_api"]
         print(user)
-        response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={generate_random_alphanumeric()}")
+        response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={await self.generate_random_alphanumeric()}")
         data = response.json()
         if data["status"] == "success" or rget.status_code == 200:
             return data["shortenedUrl"]
