@@ -4,33 +4,9 @@ import string
 import random
 from configs import Config
 from pyrogram import Client
-from pyrogram.types import (
-    Message,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton
-)
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
 from handlers.helpers import str_to_b64
-
-def generate_random_alphanumeric():
-    """Generate a random 8-letter alphanumeric string."""
-    characters = string.ascii_letters + string.digits
-    random_chars = ''.join(random.choice(characters) for _ in range(8))
-    return random_chars
-
-def get_short(url, api, link):
-    if url and api:
-        rget = requests.get(f"https://{url}/api?api={api}&url={link}&alias={generate_random_alphanumeric()}")
-        rjson = rget.json()
-        if rjson["status"] == "success" or rget.status_code == 200:
-            return rjson["shortenedUrl"]
-    default_url = Config.SHORTLINK_URL
-    default_api = Config.SHORTLINK_API
-    rget = requests.get(f"https://{default_url}/api?api={default_api}&url={link}&alias={generate_random_alphanumeric()}")
-    rjson = rget.json()
-    if rjson["status"] == "success" or rget.status_code == 200:
-        return rjson["shortenedUrl"]
-    return link
     
 async def forward_to_channel(bot: Client, message: Message, editable: Message):
     try:
