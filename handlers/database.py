@@ -25,7 +25,7 @@ class Database:
             )
         )
 
-    async def generate_random_alphanumeric():
+    async def generate_random_alphanumeric(self):
         characters = string.ascii_letters + string.digits
         random_chars = ''.join(random.choice(characters) for _ in range(8))
         return random_chars
