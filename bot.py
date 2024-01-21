@@ -61,7 +61,7 @@ async def start(bot: Client, cmd: Message):
             InlineKeyboardButton("🎲 ғᴇᴀᴛᴜʀᴇꜱ 🎲", callback_data="features")
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
-        await cmd.message.edit(
+        await cmd.reply_text(
             script.START_TEXT,
             disable_web_page_preview=True,
             reply_markup=reply_markup
