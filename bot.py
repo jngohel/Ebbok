@@ -49,8 +49,7 @@ async def start(bot: Client, cmd: Message):
     if AUTH_CHANNEL is not None:
         back = await handle_force_sub(bot, cmd)
         if back == 400:
-            return
-    
+            return    
     usr_cmd = cmd.text.split("_", 1)[-1]
     if usr_cmd == "/start":
         await add_user_to_database(bot, cmd)
@@ -97,19 +96,23 @@ async def main(bot: Client, message: Message):
             if back == 400:
                 return
         if message.from_user.id in BANNED_USERS:
-            await message.reply_text("Sorry, You are banned!",
-                                     disable_web_page_preview=True)
+            await message.reply_text(
+                text="Sorry, You are banned!",
+                disable_web_page_preview=True)
             return
 
         if OTHER_USERS_CAN_SAVE_FILE is False:
             return
 
+        btn = [[
+            InlineKeyboardButton("ʙᴀᴛᴄʜ ʟɪɴᴋ", callback_data="batch")
+        ],[
+            InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", callback_data="sharable")
+        ]]
+        reply_markup=InlineKeyboardMarkup(btn)
         await message.reply_text(
-            text="**Choose an option from below:**",
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Save in Batch", callback_data="addToBatchTrue")],
-                [InlineKeyboardButton("Get Sharable Link", callback_data="addToBatchFalse")]
-            ]),
+            text="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏꜱᴇ ʜᴇʀᴇ 👇</b>",
+            reply_markup=reply_markup,
             quote=True,
             disable_web_page_preview=True
         )
@@ -132,7 +135,7 @@ async def main(bot: Client, message: Message):
                 reply_markup=InlineKeyboardMarkup(
                     [
                         [
-                            InlineKeyboardButton("Get Sharable Link", url=share_link)
+                            InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", url=share_link)
                         ]
                     ]
                 )
@@ -165,11 +168,8 @@ async def broadcast_handler_open(_, m: Message):
 
 @Bot.on_message(filters.private & filters.command("stats") & filters.user(BOT_OWNER))
 async def sts(_, m: Message):
-    total_users = await db.total_users_count()
-    await m.reply_text(
-        text=f"**Total Users in DB:** `{total_users}`",
-        quote=True
-    )
+    users = await db.total_users_count()
+    await m.reply_text(text=f"Total users - <code>`{users}</code></b>")
 
 @Bot.on_message(filters.private & filters.command("ban_user") & filters.user(BOT_OWNER))
 async def ban(c: Client, m: Message):
@@ -365,7 +365,7 @@ async def button(bot: Client, cmd: CallbackQuery):
         except Exception as e:
             await cmd.answer(f"Can't Ban Him!\n\nError: {e}", show_alert=True)
 
-    elif "addToBatchTrue" in cb_data:
+    elif "batch" in cb_data:
         if MediaList.get(f"{str(cmd.from_user.id)}", None) is None:
             MediaList[f"{str(cmd.from_user.id)}"] = []
         file_id = cmd.message.reply_to_message.id
@@ -373,14 +373,14 @@ async def button(bot: Client, cmd: CallbackQuery):
         await cmd.message.edit("File Saved in Batch!\n\n"
                                "Press below button to get batch link.",
                                reply_markup=InlineKeyboardMarkup([
-                                   [InlineKeyboardButton("Get Batch Link", callback_data="getBatchLink")],
+                                   [InlineKeyboardButton("Get Batch Link", callback_data="get_batch")],
                                    [InlineKeyboardButton("Close Message", callback_data="closeMessage")]
                                ]))
 
-    elif "addToBatchFalse" in cb_data:
+    elif "sharable" in cb_data:
         await save_media_in_channel(bot, editable=cmd.message, message=cmd.message.reply_to_message)
 
-    elif "getBatchLink" in cb_data:
+    elif "get_batch" in cb_data:
         message_ids = MediaList.get(f"{str(cmd.from_user.id)}", None)
         if message_ids is None:
             await cmd.answer("Batch List Empty!", show_alert=True)
