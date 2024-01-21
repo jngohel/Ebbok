@@ -6,7 +6,7 @@ from Script import script
 from pyrogram import Client, enums, filters
 from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
-from info import DB_CHANNEL, UPDATES_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK
+from info import DB_CHANNEL, AUTH_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK
 from handlers.database import db
 from handlers.add_user_to_db import add_user_to_database
 from handlers.send_file import send_media_and_reply
@@ -46,7 +46,7 @@ async def start(bot: Client, cmd: Message):
     if cmd.from_user.id in BANNED_USERS:
         await cmd.reply_text("Sorry, You are banned.")
         return
-    if UPDATES_CHANNEL is not None:
+    if AUTH_CHANNEL is not None:
         back = await handle_force_sub(bot, cmd)
         if back == 400:
             return
@@ -92,12 +92,12 @@ async def start(bot: Client, cmd: Message):
 async def main(bot: Client, message: Message):
     if message.chat.type == enums.ChatType.PRIVATE:
         await add_user_to_database(bot, message)
-        if UPDATES_CHANNEL is not None:
+        if AUTH_CHANNEL is not None:
             back = await handle_force_sub(bot, message)
             if back == 400:
                 return
         if message.from_user.id in BANNED_USERS:
-            await message.reply_text("Sorry, You are banned!\n\nContact [𝙎𝙪𝙥𝙥𝙤𝙧𝙩 𝙂𝙧𝙤𝙪𝙥](https://t.me/VJ_Bot_Disscussion)",
+            await message.reply_text("Sorry, You are banned!",
                                      disable_web_page_preview=True)
             return
 
@@ -114,7 +114,7 @@ async def main(bot: Client, message: Message):
             disable_web_page_preview=True
         )
     elif message.chat.type == enums.ChatType.CHANNEL:
-        if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(UPDATES_CHANNEL)) or message.forward_from_chat or message.forward_from:
+        if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(AUTH_CHANNEL)) or message.forward_from_chat or message.forward_from:
             return
         elif int(message.chat.id) in BANNED_CHAT_IDS:
             await bot.leave_chat(message.chat.id)
@@ -277,7 +277,7 @@ async def clear_user_batch(bot: Client, m: Message):
 @Bot.on_callback_query()
 async def button(bot: Client, cmd: CallbackQuery):
     cb_data = cmd.data
-    if "gotohome" in cb_data:
+    if "start" in cb_data:
         btn = [[
             InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ", url=UPDATES_CHANNEL_LINK)
         ],[
@@ -291,12 +291,23 @@ async def button(bot: Client, cmd: CallbackQuery):
             reply_markup=reply_markup
         )
 
+    elif "features" in cb_data:
+        btn = [[
+            InlineKeyboardButton("ʙᴀᴄᴋ", callback_data="start")
+        ]]
+        reply_markup=InlineKeyboardMarkup(btn)
+        await cmd.message.edit(
+            script.FEATURES_TEXT,
+            disable_web_page_preview=True,
+            reply_markup=reply_markup
+        )
+
     elif "checksub" in cb_data:
-        if UPDATES_CHANNEL:
-            if UPDATES_CHANNEL.startswith("-100"):
-                channel_chat_id = int(UPDATES_CHANNEL)
+        if AUTH_CHANNEL:
+            if AUTH_CHANNEL.startswith("-100"):
+                channel_chat_id = int(AUTH_CHANNEL)
             else:
-                channel_chat_id = UPDATES_CHANNEL
+                channel_chat_id = AUTH_CHANNEL
             try:
                 user = await bot.get_chat_member(channel_chat_id, cmd.message.chat.id)
                 if user.status == "kicked":
@@ -315,7 +326,7 @@ async def button(bot: Client, cmd: CallbackQuery):
                                 InlineKeyboardButton("🤖 Join Updates Channel", url=invite_link.invite_link)
                             ],
                             [
-                                InlineKeyboardButton("🔄 Refresh 🔄", callback_data="refreshmeh")
+                                InlineKeyboardButton("🔄 Refresh 🔄", callback_data="checksub")
                             ]
                         ]
                     )
