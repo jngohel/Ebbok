@@ -90,7 +90,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             disable_web_page_preview=True)
         user_id = message.from_user.id
         user = await db.get_user(user_id)
-        share_link = f"https://telegram.me/{Config.BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id.id)}"
+        share_link = f"https://telegram.me/{Config.BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
         short_link = await db.get_shortlink(user, share_link)
         await editable.edit(
             "**Your File Stored in my Database!**\n\n"
