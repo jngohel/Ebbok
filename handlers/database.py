@@ -1,6 +1,6 @@
 import datetime
 import motor.motor_asyncio
-from configs import Config
+from info import SHORTENER_WEBSITE, SHORTENER_API, BOT_USERNAME, DATABASE_URL
 import requests
 import random
 import string
@@ -38,8 +38,8 @@ class Database:
         base_site = user["base_site"]
         api_key = user["shortener_api"]
         if not base_site or not api_key:
-            base_site = Config.SHORTENER_WEBSITE
-            api_key = Config.SHORTENER_API
+            base_site = SHORTENER_WEBSITE
+            api_key = SHORTENER_API
         response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={await self.generate_random_alphanumeric()}")
         data = response.json()
         if data["status"] == "success" or rget.status_code == 200:
@@ -111,4 +111,4 @@ class Database:
         banned_users = self.col.find({'ban_status.is_banned': True})
         return banned_users
 
-db = Database(Config.DATABASE_URL, Config.BOT_USERNAME)
+db = Database(DATABASE_URL, BOT_USERNAME)
