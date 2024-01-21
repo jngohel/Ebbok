@@ -37,7 +37,9 @@ class Database:
     async def get_shortlink(self, user, link):
         base_site = user["base_site"]
         api_key = user["shortener_api"]
-        print(user)
+        if not base_site or not api_key:
+            base_site = Config.SHORTENER_WEBSITE
+            api_key = Config.SHORTENER_API
         response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={await self.generate_random_alphanumeric()}")
         data = response.json()
         if data["status"] == "success" or rget.status_code == 200:
