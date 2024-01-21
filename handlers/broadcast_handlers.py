@@ -6,22 +6,16 @@ import aiofiles
 import asyncio
 import traceback
 import aiofiles.os
-from configs import Config
-from pyrogram.errors import (
-    FloodWait,
-    InputUserDeactivated,
-    UserIsBlocked,
-    PeerIdInvalid
-)
+from info import BROADCAST_AS_COPY
+from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked, PeerIdInvalid
 
 broadcast_ids = {}
 
-
 async def send_msg(user_id, message):
     try:
-        if Config.BROADCAST_AS_COPY is False:
+        if BROADCAST_AS_COPY is False:
             await message.forward(chat_id=user_id)
-        elif Config.BROADCAST_AS_COPY is True:
+        elif BROADCAST_AS_COPY is True:
             await message.copy(chat_id=user_id)
         return 200, None
     except FloodWait as e:
@@ -35,7 +29,6 @@ async def send_msg(user_id, message):
         return 400, f"{user_id} : user id invalid\n"
     except Exception as e:
         return 500, f"{user_id} : {traceback.format_exc()}\n"
-
 
 async def main_broadcast_handler(m, db):
     all_users = await db.get_all_users()
