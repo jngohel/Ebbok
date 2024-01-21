@@ -1,5 +1,5 @@
 import asyncio
-from info import DB_CHANNEL, LOG_CHANNEL, 
+from info import DB_CHANNEL, LOG_CHANNEL
 from pyrogram import Client
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
