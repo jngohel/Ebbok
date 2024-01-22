@@ -110,7 +110,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton("Delete Batch", callback_data="closeMessage")
+                        InlineKeyboardButton("Delete Batch", callback_data="close_data")
                     ]
                 ]
             )
@@ -139,8 +139,8 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton("Original Link", url=short_link),
-                        InlineKeyboardButton("Short Link", url=share_link)
+                        InlineKeyboardButton("Original Link", url=share_link),
+                        InlineKeyboardButton("Short Link", url=short_link)
                     ]
                 ]
             )
