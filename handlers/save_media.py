@@ -41,14 +41,15 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=short_link)
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
+        msg = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
         await editable.reply_text(
-            text=f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>",
+            text=msg,
             reply_markup=reply_markup,
             disable_web_page_preview=True
         )
         if user.get("channel_id"):
             channel_id = user["channel_id"]
-            await bot.send_message(channel_id, f"<b>{text}</b>")
+            await bot.send_message(channel_id, f"<b>{msg}</b>")
     except FloodWait as sl:
         if sl.value > 45:
             print(f"Sleep of {sl.value}s caused by FloodWait ...")
