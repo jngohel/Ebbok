@@ -65,6 +65,12 @@ class Database:
         new_value = { "$set": value }
         await self.col.update_one(my_query, new_value)
 
+    async def update_forward_channel(self, user_id, channel_id):
+        user_id = int(user_id)
+        my_query = {"user_id": user_id}
+        new_value = {"$set": {"channel_id": channel_id}}
+        await self.col.update_one(my_query, new_value)
+
     async def is_user_exist(self, id):
         user = await self.col.find_one({'id': int(id)})
         return True if user else False
