@@ -65,6 +65,10 @@ async def remove_channel(client, message):
 
 @Bot.on_message(filters.command('info') & filters.private)
 async def info(client, message):
+    btn = [[
+        InlineKeyboardButton("ᴄʟᴏꜱᴇ", callback_data="close_data")
+    ]]
+    reply_markup=InlineKeyboardMarkup(btn)
     user_id = message.from_user.id
     user = await db.get_user(user_id)
     if user:
@@ -73,7 +77,7 @@ async def info(client, message):
 Base Site - `{user['base_site']}`
 
 Forward Channel - `{user.get('channel_id')}`"""
-        await message.reply_text(text)
+        await message.reply_text(text, reply_markup=reply_markup)
  
 @Bot.on_message(filters.command("start") & filters.private)
 async def start(bot: Client, cmd: Message):
@@ -403,7 +407,7 @@ async def button(bot: Client, cmd: CallbackQuery):
     elif "sharable_mode" in cb_data:
         await save_media_in_channel(bot, editable=cmd.message, message=cmd.message.reply_to_message)
 
-    elif "closeMessage" in cb_data:
+    elif "close_data" in cb_data:
         await cmd.message.delete(True)
     try:
         await cmd.answer()
