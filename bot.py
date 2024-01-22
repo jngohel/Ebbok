@@ -32,12 +32,13 @@ async def _(bot: Client, cmd: Message):
 
 @Bot.on_message(filters.command("set_caption") & filters.private)
 async def caption_set(client, message):
+    user_id = message.from_user.id
     try:
         caption = (message.text).split(" ", 1)[1]
     except IndexError:
         return await message.reply_text("Give me a caption along with it.\n\nExample: <code>/set_caption File Name: {file_name}\nPowered By Admin of Bot</code>")
     else:
-        await db.update_user_info(message.from_user.id, {'f_caption': caption})
+        await db.update_user_info(user_id, {'caption': caption})
         return await message.reply_text(f"Successfully saved file caption with value:\n{caption}")
 
 @Bot.on_message(filters.command("set_shortner") & filters.private)
