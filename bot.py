@@ -355,6 +355,10 @@ async def button(bot: Client, cmd: CallbackQuery):
             await cmd.answer(f"Can't Ban Him!\n\nError: {e}", show_alert=True)
 
     elif "genratebatchlink" in cb_data:
+        if MediaList.get(f"{str(cmd.from_user.id)}", None) is None:
+            MediaList[f"{str(cmd.from_user.id)}"] = []
+        file_id = cmd.message.reply_to_message.id
+        MediaList[f"{str(cmd.from_user.id)}"].append(file_id)
         message_ids = MediaList.get(f"{str(cmd.from_user.id)}", None)
         if message_ids is None:
             await cmd.answer("Batch List Empty!", show_alert=True)
