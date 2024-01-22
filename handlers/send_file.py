@@ -33,7 +33,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
             if user and 'caption' in user.keys():
                 file = await bot.get_messages(
                     chat_id=DB_CHANNEL,
-                    message_ids=file_id
+                    message_id=file_id
                 )
                 if file and file.document:
                     file_name = file.document.file_name
@@ -45,7 +45,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     return await bot.forward_messages(
                         chat_id=user_id, 
                         from_chat_id=DB_CHANNEL,
-                        message_ids=file_id
+                        message_id=file_id
                     )
                 return await bot.send_cached_media(
                     chat_id=user_id,
@@ -58,7 +58,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 return await bot.forward_messages(
                     chat_id=user_id, 
                     from_chat_id=DB_CHANNEL,
-                    message_ids=file_id
+                    message_id=file_id
                 )
 
     except FloodWait as e:
