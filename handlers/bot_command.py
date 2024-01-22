@@ -1,12 +1,11 @@
 from handlers.database import db
 from info import BOT_OWNER, 
 from handlers.broadcast_handlers import main_broadcast_handler
-from bot import Bot
 from pyrogram import Client, enums, filters
 
 MediaList = {}
 
-@Bot.on_message(filters.command("set_shortner") & filters.private)
+@Client.on_message(filters.command("set_shortner") & filters.private)
 async def set_shortlink(client, message):
     user_id = message.from_user.id
     try:
@@ -17,7 +16,7 @@ async def set_shortlink(client, message):
     await db.update_user_info(user_id, user_data)
     await message.reply_text(f"<b>Successfully set shortlink\n\nURL - {url}\nAPI - <code>{api}</code></b>")
 
-@Bot.on_message(filters.command("set_channel") & filters.private)
+@Client.on_message(filters.command("set_channel") & filters.private)
 async def set_channel(client, message):
     user_id = message.from_user.id
     try:
@@ -30,7 +29,7 @@ async def set_channel(client, message):
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
-@Bot.on_message(filters.command("remove_channel") & filters.private)
+@Client.on_message(filters.command("remove_channel") & filters.private)
 async def remove_channel(client, message):
     user_id = message.from_user.id
     try:
@@ -39,16 +38,16 @@ async def remove_channel(client, message):
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
-@Bot.on_message(filters.private & filters.command("broadcast") & filters.user(BOT_OWNER) & filters.reply)
+@Client.on_message(filters.private & filters.command("broadcast") & filters.user(BOT_OWNER) & filters.reply)
 async def broadcast_handler_open(_, m: Message):
     await main_broadcast_handler(m, db)
 
-@Bot.on_message(filters.private & filters.command("stats") & filters.user(BOT_OWNER))
+@Client.on_message(filters.private & filters.command("stats") & filters.user(BOT_OWNER))
 async def sts(_, m: Message):
     users = await db.total_users_count()
     await m.reply_text(text=f"Total users - <code>`{users}</code></b>")
 
-@Bot.on_message(filters.private & filters.command("ban_user") & filters.user(BOT_OWNER))
+@Client.on_message(filters.private & filters.command("ban_user") & filters.user(BOT_OWNER))
 async def ban(c: Client, m: Message):
     if len(m.command) == 1:
         await m.reply_text(
@@ -88,7 +87,7 @@ async def ban(c: Client, m: Message):
             quote=True
         )
 
-@Bot.on_message(filters.private & filters.command("unban_user") & filters.user(BOT_OWNER))
+@Client.on_message(filters.private & filters.command("unban_user") & filters.user(BOT_OWNER))
 async def unban(c: Client, m: Message):
     if len(m.command) == 1:
         await m.reply_text(
@@ -124,7 +123,7 @@ async def unban(c: Client, m: Message):
             quote=True
         )
       
-@Bot.on_message(filters.private & filters.command("banned_users") & filters.user(BOT_OWNER))
+@Client.on_message(filters.private & filters.command("banned_users") & filters.user(BOT_OWNER))
 async def _banned_users(_, m: Message):    
     all_banned_users = await db.get_all_banned_users()
     banned_usr_count = 0
@@ -146,7 +145,7 @@ async def _banned_users(_, m: Message):
         return
     await m.reply_text(reply_text, True)
 
-@Bot.on_message(filters.private & filters.command("clear_batch"))
+@Client.on_message(filters.private & filters.command("clear_batch"))
 async def clear_user_batch(bot: Client, m: Message):
     MediaList[f"{str(m.from_user.id)}"] = []
     await m.reply_text("Cleared your batch files successfully!")
