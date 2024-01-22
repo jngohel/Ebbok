@@ -105,7 +105,7 @@ async def main(bot: Client, message: Message):
             return
 
         btn = [[
-            InlineKeyboardButton("ʙᴀᴛᴄʜ ʟɪɴᴋ", callback_data="batch_mode")
+            InlineKeyboardButton("ʙᴀᴛᴄʜ ʟɪɴᴋ", callback_data="genratebatchlink")
         ],[
             InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", callback_data="sharable_mode")
         ]]
@@ -353,22 +353,6 @@ async def button(bot: Client, cmd: CallbackQuery):
             await cmd.answer("User Banned from Updates Channel!", show_alert=True)
         except Exception as e:
             await cmd.answer(f"Can't Ban Him!\n\nError: {e}", show_alert=True)
-
-    elif "batch_mode" in cb_data:
-        btn = [[
-            InlineKeyboardButton("Get Batch Link", callback_data="genratebatchlink")
-        ],[
-            InlineKeyboardButton("Close Message", callback_data="closeMessage")
-        ]]
-        reply_markup=InlineKeyboardMarkup(btn)
-        if MediaList.get(f"{str(cmd.from_user.id)}", None) is None:
-            MediaList[f"{str(cmd.from_user.id)}"] = []
-        file_id = cmd.message.reply_to_message.id
-        MediaList[f"{str(cmd.from_user.id)}"].append(file_id)
-        await cmd.message.edit_text(
-            text="File Saved in Batch!\n\nPress below button to get batch link.",
-            reply_markup=reply_markup
-        )
 
     elif "genratebatchlink" in cb_data:
         message_ids = MediaList.get(f"{str(cmd.from_user.id)}", None)
