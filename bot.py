@@ -1,4 +1,5 @@
 import os
+from telethon.tl.types import DocumentAttributeVideo
 import asyncio
 import traceback
 from binascii import Error
@@ -122,22 +123,32 @@ async def main(bot: Client, message: Message):
                 text="Sorry, You are banned!",
                 disable_web_page_preview=True)
             return
-
         if OTHER_USERS_CAN_SAVE_FILE is False:
             return
-
+        thumbnail = None
+        if message.video:
+            thumbnail = message.video.thumbs[-1] if message.video.thumbs else None
+        elif message.document and isinstance(message.media.document.attributes[0], DocumentAttributeVideo):
+            thumbnail = message.document.thumbs[-1] if message.document.thumbs else None
+        if thumbnail:
+            await bot.send_photo(
+                chat_id=message.chat.id,
+                photo=thumbnail,
+                caption="Here is the poster for the file you sent."
+            )
         btn = [[
             InlineKeyboardButton("ʙᴀᴛᴄʜ ʟɪɴᴋ", callback_data="genratebatchlink")
-        ],[
+        ], [
             InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", callback_data="sharable_mode")
         ]]
-        reply_markup=InlineKeyboardMarkup(btn)
+        reply_markup = InlineKeyboardMarkup(btn)
         await message.reply_text(
             text="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏꜱᴇ ʜᴇʀᴇ 👇</b>",
             reply_markup=reply_markup,
             quote=True,
             disable_web_page_preview=True
         )
+
     elif message.chat.type == enums.ChatType.CHANNEL:
         if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(AUTH_CHANNEL)) or message.forward_from_chat or message.forward_from:
             return
