@@ -53,7 +53,16 @@ async def set_channel(client, message):
         await message.reply_text("<b>Invalid channel ID. Please provide a valid integer.</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
-        
+
+@Bot.on_message(filters.command("remove_channel") & filters.private)
+async def remove_channel(client, message):
+    user_id = message.from_user.id
+    try:
+        await db.remove_forward_channel(user_id)
+        await message.reply_text("<b>Channel ID removed successfully.</b>")
+    except Exception as e:
+        await message.reply_text(f"<b>Error: <code>{e}</code></b>")
+
 @Bot.on_message(filters.command("start") & filters.private)
 async def start(bot: Client, cmd: Message):
     if cmd.from_user.id in BANNED_USERS:
