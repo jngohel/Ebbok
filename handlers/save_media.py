@@ -27,6 +27,10 @@ async def forward_to_channel(bot: Client, message: Message, editable: Message):
 
 async def save_media_in_channel(bot: Client, editable: Message, message: Message):
     try:
+        btn = [[
+            InlineKeyboardButton("ᴏᴘᴇɴ ʟɪɴᴋ", url=share_link),
+            InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=short_link)
+        ]]
         forwarded_msg = await message.forward(DB_CHANNEL)
         file_er_id = str(forwarded_msg.id)
         msg = await editable.edit("<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>")
@@ -37,17 +41,8 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
         short_link = await db.get_shortlink(user, share_link)
         await editable.reply_text(
-            "**Your File Stored in my Database!**\n\n"
-            f"Here is the Permanent Link of your file: <code>{short_link}</code> \n\n"
-            "Just Click the link to get your file!",
-            reply_markup=InlineKeyboardMarkup(
-               [
-                   [
-                       InlineKeyboardButton("Original Link", url=share_link),
-                       InlineKeyboardButton("Short Link", url=short_link)
-                   ]
-               ]
-            ),
+            text="<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>",
+            reply_markup=reply_markup,
             disable_web_page_preview=True
         )
     except FloodWait as sl:
