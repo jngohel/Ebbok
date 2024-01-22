@@ -41,6 +41,15 @@ async def set_caption(client, message):
         await db.custom_file_caption(user_id, caption)
         return await message.reply_text(f"Successfully saved file caption with value:\n{caption}")
 
+@Bot.on_message(filters.command("remove_caption") & filters.private)
+async def remove_caption(client, message):
+    user_id = message.from_user.id
+    try:
+        await db.remove_caption(user_id)
+        await message.reply_text("<b>Channel ID removed successfully.</b>")
+    except Exception as e:
+        await message.reply_text(f"<b>Error: <code>{e}</code></b>")
+
 @Bot.on_message(filters.command("set_shortner") & filters.private)
 async def set_shortlink(client, message):
     user_id = message.from_user.id
