@@ -7,7 +7,7 @@ from pyrogram import Client
 from pyrogram.types import Message
 from pyrogram.errors import FloodWait
 from handlers.helpers import str_to_b64
-from handlers.database import db as dbObject
+from handlers.database import db
 
 async def reply_forward(message: Message, file_id: int):
     try:
@@ -29,18 +29,18 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 message_id=file_id
             )
         elif FORWARD_AS_COPY is False:
-            userObject = await dbObject.get_user(user_id)
-            if userObject and 'caption' in userObject.keys():
-                fileObject = await bot.get_messages(
+            user = await db.get_user(user_id)
+            if user and 'caption' in user.keys():
+                file = await bot.get_messages(
                     chat_id=DB_CHANNEL,
                     message_ids=file_id
                 )
-                if fileObject and fileObject.document:
-                    f_name = fileObject.document.file_name
-                elif fileObject and fileObject.video:
-                    f_name = fileObject.video.file_name
-                elif fileObject and fileObject.audio:
-                    f_name = fileObject.audio.file_name
+                if file and file.document:
+                    file_name = file.document.file_name
+                elif file and file.video:
+                    file_name = file.video.file_name
+                elif file and file.audio:
+                    file_name = file.audio.file_name
                 else:
                     return await bot.forward_messages(
                         chat_id=user_id, 
@@ -50,8 +50,8 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 return await bot.send_cached_media(
                     chat_id=user_id,
                     file_id=file_id,
-                    caption=userObject['caption'].format(
-                        file_name=f_name
+                    caption=user['caption'].format(
+                        file_name=file_name
                     )
                 )
             else:
@@ -60,7 +60,6 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     from_chat_id=DB_CHANNEL,
                     message_ids=file_id
                 )
-
 
     except FloodWait as e:
         await asyncio.sleep(e.value)
