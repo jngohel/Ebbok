@@ -71,7 +71,7 @@ async def user_info_command(client, message):
         text = (
             f"Shortener API -`{user['shortener_api']}`\n"
             f"Base Site - `{user['base_site']}`\n"
-            f"Forward Channel - `{user.get('channel_id')}`" if user['channel_id'] else "Not Set"
+            f"Forward Channel - `{user.get('channel_id')}`" if user.get('channel_id') else "Not Set"
         )
         await message.reply_text(text)
     else:
