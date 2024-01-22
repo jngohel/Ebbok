@@ -7,6 +7,7 @@ from pyrogram import Client
 from pyrogram.types import Message
 from pyrogram.errors import FloodWait
 from handlers.helpers import str_to_b64
+from database import db as dbObject
 
 async def reply_forward(message: Message, file_id: int):
     try:
@@ -28,11 +29,39 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 message_id=file_id
             )
         elif FORWARD_AS_COPY is False:
-            return await bot.forward_messages(
-                chat_id=user_id, 
-                from_chat_id=DB_CHANNEL,
-                message_ids=file_id
-            )
+            userObject = await dbObject.get_user(user_id)
+            if userObject and 'caption' in userObject.keys():
+                fileObject = await bot.get_messages(
+                    chat_id=DB_CHANNEL,
+                    message_ids=file_id
+                )
+                if fileObject and fileObject.document:
+                    f_name = fileObject.document.file_name
+                elif fileObject and fileObject.video:
+                    f_name = fileObject.video.file_name
+                elif fileObject and fileObject.audio:
+                    f_name = fileObject.audio.file_name
+                else:
+                    return await bot.forward_messages(
+                        chat_id=user_id, 
+                        from_chat_id=DB_CHANNEL,
+                        message_ids=file_id
+                    )
+                return await bot.send_cached_media(
+                    chat_id=user_id,
+                    file_id=file_id,
+                    caption=userObject['caption'].format(
+                        file_name=f_name
+                    )
+                )
+            else:
+                return await bot.forward_messages(
+                    chat_id=user_id, 
+                    from_chat_id=DB_CHANNEL,
+                    message_ids=file_id
+                )
+
+
     except FloodWait as e:
         await asyncio.sleep(e.value)
         return media_forward(bot, user_id, file_id)
