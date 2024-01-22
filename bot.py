@@ -41,6 +41,19 @@ async def set_shortlink(client, message):
     await db.update_user_info(user_id, user_data)
     await message.reply_text(f"<b>Successfully set shortlink\n\nURL - {url}\nAPI - <code>{api}</code></b>")
 
+@Bot.on_message(filters.command("set_channel") & filters.private)
+async def set_channel(client, message):
+    user_id = message.from_user.id
+    try:
+        _, channel_id = message.text.split(" ", 1)
+        id = int(channel_id)
+        await db.update_forward_channel(user_id, id)      
+        await message.reply_text(f"<b>Successfully set channel ID to {id}</b>")
+    except ValueError:
+        await message.reply_text("<b>Invalid channel ID. Please provide a valid integer.</b>")
+    except Exception as e:
+        await message.reply_text(f"<b>Error: <code>{e}</code></b>")
+        
 @Bot.on_message(filters.command("start") & filters.private)
 async def start(bot: Client, cmd: Message):
     if cmd.from_user.id in BANNED_USERS:
