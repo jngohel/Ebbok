@@ -53,9 +53,7 @@ class Database:
             res = {
                 "user_id": user_id,
                 "shortener_api": None,
-                "base_site": None,
-                "channel_id": None,
-                "caption": "{file_name}"
+                "base_site": None
             }
             await self.col.insert_one(res)
             user = await self.col.find_one({"user_id": user_id})
