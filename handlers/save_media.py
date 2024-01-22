@@ -32,6 +32,9 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         msg = await editable.edit("<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>")
         await asyncio.sleep(5)
         await msg.delete()
+        await forwarded_msg.reply_text(
+            f"#PRIVATE_FILE:\n\n[{message.from_user.first_name}](tg://user?id={message.from_user.id}) Got File Link!",
+            disable_web_page_preview=True)
         user_id = message.from_user.id
         user = await db.get_user(user_id)
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
