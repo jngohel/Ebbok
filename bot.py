@@ -72,7 +72,7 @@ async def info(client, message):
 
 Base Site - `{user['base_site']}`
 
-Forward Channel - `{user['channel_id']}`"""
+Forward Channel - `{user.get('channel_id')}`"""
         await message.reply_text(text)
  
 @Bot.on_message(filters.command("start") & filters.private)
