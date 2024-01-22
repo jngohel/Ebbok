@@ -370,7 +370,7 @@ async def button(bot: Client, cmd: CallbackQuery):
             MediaList[f"{str(cmd.from_user.id)}"] = []
         file_id = cmd.message.reply_to_message.id
         MediaList[f"{str(cmd.from_user.id)}"].append(file_id)
-        await cmd.message.edit("File Saved in Batch!\n\nPress below button to get batch link.",
+        await cmd.message.edit_text("File Saved in Batch!\n\nPress below button to get batch link.",
                                reply_markup=InlineKeyboardMarkup(
                                    [
                                        [
@@ -390,7 +390,7 @@ async def button(bot: Client, cmd: CallbackQuery):
         if message_ids is None:
             await cmd.answer("Batch List Empty!", show_alert=True)
             return
-        await cmd.message.edit("Please wait, generating batch link...")
+        await cmd.message.edit_text("Please wait, generating batch link...")
         await save_batch_media_in_channel(bot=bot, editable=cmd.message, message_ids=message_ids)
         MediaList[f"{str(cmd.from_user.id)}"] = []
 
