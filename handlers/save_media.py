@@ -40,6 +40,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             InlineKeyboardButton("ᴏᴘᴇɴ ʟɪɴᴋ", url=share_link),
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=short_link)
         ]]
+        reply_markup=InlineKeyboardMarkup(btn)
         await editable.reply_text(
             text=f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>",
             reply_markup=reply_markup,
