@@ -63,6 +63,20 @@ async def remove_channel(client, message):
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
+@Bot.on_message(filters.command('info') & filters.private)
+async def user_info_command(client, message):
+    user_id = message.from_user.id
+    user = await db.get_user(user_id)
+    if user:
+        text = (
+            f"Shortener API -`{user['shortener_api']}`\n"
+            f"Base Site - `{user['base_site']}`\n"
+            f"Forward Channel - `{user['channel_id']}`" if user['channel_id'] else "Not Set"
+        )
+        await message.reply_text(text)
+    else:
+        await message.reply_text("No information found for this user.")
+        
 @Bot.on_message(filters.command("start") & filters.private)
 async def start(bot: Client, cmd: Message):
     if cmd.from_user.id in BANNED_USERS:
