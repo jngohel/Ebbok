@@ -1,5 +1,4 @@
 import os
-from telethon.tl.types import DocumentAttributeVideo
 import asyncio
 import traceback
 from binascii import Error
