@@ -42,17 +42,17 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 try:
                     if file and file.document:
                         file_name = file.document.file_name
-                        file_size = file.document.file_size
+                        file_size = await db.get_size(file.document.file_size)
                         file_id = file.document.file_id
                         duration = file.document.duration if hasattr(file.document, 'duration') else None
                     elif file and file.video:
                         file_name = file.video.file_name
-                        file_size = file.video.file_size
+                        file_size = await db.get_size(file.video.file_size)
                         file_id = file.video.file_id
                         duration = file.video.duration if hasattr(file.video, 'duration') else None
                     elif file and file.audio:
                         file_name = file.audio.file_name
-                        file_size = file.audio.file_size
+                        file_size = await db.get_size(file.audio.file_size)
                         file_id = file.audio.file_id
                         duration = file.audio.duration if hasattr(file.audio, 'duration') else None
                     else:
