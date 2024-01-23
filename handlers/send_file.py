@@ -24,13 +24,12 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
     try:
         if FORWARD_AS_COPY is True:
             return await bot.copy_message(
-                chat_id=user_id, 
+                chat_id=user_id,
                 from_chat_id=DB_CHANNEL,
                 message_id=file_id
             )
         elif FORWARD_AS_COPY is False:
             user = await db.get_user(user_id)
-            print(user) #for better logging 
             if user and 'caption' in user.keys():
                 try:
                     file = await bot.get_messages(
@@ -39,49 +38,55 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     )
                 except Exception as e:
                     print(f"File fetch error: {e}")
-                else:
-                    print("Success fetched file")
+                    return
+
                 try:
                     if file and file.document:
                         file_name = file.document.file_name
-                        file_id = file.document.file_id
+                        file_size = file.document.file_size
+                        duration = file.document.duration if hasattr(file.document, 'duration') else None
                     elif file and file.video:
                         file_name = file.video.file_name
-                        file_id = file.video.file_id
+                        file_size = file.video.file_size
+                        duration = file.video.duration if hasattr(file.video, 'duration') else None
                     elif file and file.audio:
                         file_name = file.audio.file_name
-                        file_id = file.audio.file_id
+                        file_size = file.audio.file_size
+                        duration = file.audio.duration if hasattr(file.audio, 'duration') else None
                     else:
                         return await bot.forward_messages(
-                            chat_id=user_id, 
+                            chat_id=user_id,
                             from_chat_id=DB_CHANNEL,
                             message_ids=file_id
                         )
                 except Exception as e:
-                    print(f"File name or id fetch error: {e}")
-                else:
-                    print(f"File name and id fetched: {file_name}\n\nID: {file_id}")
+                    print(f"File info fetch error: {e}")
+                    return
+
                 try:
-                    return await bot.send_cached_media(
+                    await bot.send_cached_media(
                         chat_id=user_id,
                         file_id=file_id,
                         caption=user['caption'].format(
-                            file_name=file_name
+                            file_name=file_name,
+                            file_size=file_size,
+                            duration=duration
+                        ) if duration else user['caption'].format(
+                            file_name=file_name,
+                            file_size=file_size
                         )
                     )
                 except Exception as e:
                     print(f"File send error: {e}")
             else:
-                return await bot.forward_messages(
-                    chat_id=user_id, 
+                await bot.forward_messages(
+                    chat_id=user_id,
                     from_chat_id=DB_CHANNEL,
                     message_ids=file_id
                 )
-
     except FloodWait as e:
         await asyncio.sleep(e.value)
-        return media_forward(bot, user_id, file_id)
-        await message.delete()
+        return await media_forward(bot, user_id, file_id)
 
 async def send_media_and_reply(bot: Client, user_id: int, file_id: int):
     sent_message = await media_forward(bot, user_id, file_id)
