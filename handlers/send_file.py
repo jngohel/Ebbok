@@ -32,29 +32,42 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
             user = await db.get_user(user_id)
             print(user) #for better logging 
             if user and 'caption' in user.keys():
-                file = await bot.get_messages(
-                    chat_id=DB_CHANNEL,
-                    message_ids=file_id
-                )
-                if file and file.document:
-                    file_name = file.document.file_name
-                elif file and file.video:
-                    file_name = file.video.file_name
-                elif file and file.audio:
-                    file_name = file.audio.file_name
-                else:
-                    return await bot.forward_messages(
-                        chat_id=user_id, 
-                        from_chat_id=DB_CHANNEL,
+                try:
+                    file = await bot.get_messages(
+                        chat_id=DB_CHANNEL,
                         message_ids=file_id
                     )
-                return await bot.send_cached_media(
-                    chat_id=user_id,
-                    file_id=file_id,
-                    caption=user['caption'].format(
-                        file_name=file_name
+                except Exception as e:
+                    print(f"File fetch error: {e}")
+                else:
+                    print("Success fetched file")
+                try:
+                    if file and file.document:
+                        file_name = file.document.file_name
+                    elif file and file.video:
+                        file_name = file.video.file_name
+                    elif file and file.audio:
+                        file_name = file.audio.file_name
+                    else:
+                        return await bot.forward_messages(
+                            chat_id=user_id, 
+                            from_chat_id=DB_CHANNEL,
+                            message_ids=file_id
+                        )
+                except Exception as e:
+                    print(f"File name fetch error: {e}")
+                else:
+                    print(f"File name fetched: {file_name}")
+                try:
+                    return await bot.send_cached_media(
+                        chat_id=user_id,
+                        file_id=file_id,
+                        caption=user['caption'].format(
+                            file_name=file_name
+                        )
                     )
-                )
+                except Exception as e:
+                    print(f"File send error: {e}")
             else:
                 return await bot.forward_messages(
                     chat_id=user_id, 
