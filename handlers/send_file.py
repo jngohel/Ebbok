@@ -39,7 +39,6 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 except Exception as e:
                     print(f"File fetch error: {e}")
                     return
-
                 try:
                     if file and file.document:
                         file_name = file.document.file_name
@@ -62,7 +61,6 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 except Exception as e:
                     print(f"File info fetch error: {e}")
                     return
-
                 try:
                     await bot.send_cached_media(
                         chat_id=user_id,
