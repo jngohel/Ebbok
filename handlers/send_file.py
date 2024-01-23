@@ -44,10 +44,13 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 try:
                     if file and file.document:
                         file_name = file.document.file_name
+                        file_id = file.document.file_id
                     elif file and file.video:
                         file_name = file.video.file_name
+                        file_id = file.video.file_id
                     elif file and file.audio:
                         file_name = file.audio.file_name
+                        file_id = file.audio.file_id
                     else:
                         return await bot.forward_messages(
                             chat_id=user_id, 
@@ -55,9 +58,9 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                             message_ids=file_id
                         )
                 except Exception as e:
-                    print(f"File name fetch error: {e}")
+                    print(f"File name or id fetch error: {e}")
                 else:
-                    print(f"File name fetched: {file_name}")
+                    print(f"File name and id fetched: {file_name}\n\nID: {file_id}")
                 try:
                     return await bot.send_cached_media(
                         chat_id=user_id,
