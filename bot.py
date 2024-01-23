@@ -97,7 +97,7 @@ async def info(client, message):
 
 ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{user.get('channel_id')}`
 
-ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user['caption']}`"""
+ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user.get('caption')}`"""
         await message.reply_text(text, reply_markup=reply_markup)
  
 @Bot.on_message(filters.command("start") & filters.private)
