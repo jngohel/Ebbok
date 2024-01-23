@@ -88,15 +88,6 @@ class Database:
         my_query = {"user_id": user_id}
         new_value = {"$unset": {"caption": ""}}
         await self.col.update_one(my_query, new_value)
-
-    async def get_size(size):
-        units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
-        size = float(size)
-        i = 0
-        while size >= 1024.0 and i < len(units):
-            i += 1
-            size /= 1024.0
-        return "%.2f %s" % (size, units[i])
         
     async def is_user_exist(self, id):
         user = await self.col.find_one({'id': int(id)})
