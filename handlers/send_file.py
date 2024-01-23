@@ -30,6 +30,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
             )
         elif FORWARD_AS_COPY is False:
             user = await db.get_user(user_id)
+            print(user) #for better logging 
             if user and 'caption' in user.keys():
                 file = await bot.get_messages(
                     chat_id=DB_CHANNEL,
