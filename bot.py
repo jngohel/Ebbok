@@ -36,17 +36,17 @@ async def set_caption(client, message):
     try:
         caption = (message.text).split(" ", 1)[1]
     except IndexError:
-        return await message.reply_text("Give me a caption along with it.\n\nExample: <code>/set_caption File Name: {file_name}\nPowered By Admin of Bot</code>")
+        return await message.reply_text("<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴄᴀᴘᴛɪᴏɴ ᴀʟᴏɴɢ ᴡɪᴛʜ ɪᴛ.\n\nᴇxᴀᴍᴘʟᴇ -\n\nꜰᴏʀ ꜰɪʟᴇ ᴅᴜʀᴀᴛɪᴏɴ ꜱᴇɴᴅ <code>{duration}</code>\nꜰᴏʀ ꜰɪʟᴇ ɴᴀᴍᴇ ꜱᴇɴᴅ <code>{file_name}</code>\nꜰᴏʀ ꜰɪʟᴇ ꜱɪᴢᴇ ꜱᴇɴᴅ <code>{file_size}</code>\n\n<code>/set_caption {file_name}</code></b>")
     else:
         await db.custom_file_caption(user_id, caption)
-        return await message.reply_text(f"Successfully saved file caption with value:\n{caption}")
+        return await message.reply_text(f"<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ\n\n<code>{caption}</code></b>")
 
 @Bot.on_message(filters.command("remove_caption") & filters.private)
 async def remove_caption(client, message):
     user_id = message.from_user.id
     try:
         await db.remove_caption(user_id)
-        await message.reply_text("<b>Channel ID removed successfully.</b>")
+        await message.reply_text("<b>ʏᴏᴜʀ ᴄᴜꜱᴛᴏᴍ ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ ʀᴇᴍᴏᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ, ɴᴏᴡ ᴏɴʟʏ ꜰɪʟᴇ ɴᴀᴍᴇ ꜱʜᴏᴡ.</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
@@ -56,10 +56,10 @@ async def set_shortlink(client, message):
     try:
         _, url, api = message.text.split(" ", 2)
     except ValueError:
-        return await message.reply_text("<b>Command Incomplete:-\n\ngive me a shortlink & api along with the command...\n\nEx:- <code>/shortlink mdisklink.link 5843c3cc645f5077b2200a2c77e0344879880b3e</code>")   
+        return await message.reply_text("<b>ꜱᴇɴᴅ ᴍᴇ ꜱʜᴏʀᴛʟɪɴᴋ ᴀɴᴅ ᴀᴘɪ ᴡɪᴛʜ ᴄᴏᴍᴍᴀɴᴅ\n\nᴇx - <code>/set_shortner tnshort.net 06b24eb6bbb025713cd522fb3f696b6d5de11354</code></b>")   
     user_data = {'base_site': url, 'shortener_api': api}
     await db.update_user_info(user_id, user_data)
-    await message.reply_text(f"<b>Successfully set shortlink\n\nURL - {url}\nAPI - <code>{api}</code></b>")
+    await message.reply_text(f"<b>ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ꜱʜᴏʀᴛʟɪɴᴋ\n\nꜱʜᴏʀᴛʟɪɴᴋ - {url}\nᴀᴘɪ - `{api}`</b>")
 
 @Bot.on_message(filters.command("set_channel") & filters.private)
 async def set_channel(client, message):
@@ -68,9 +68,9 @@ async def set_channel(client, message):
         _, channel_id = message.text.split(" ", 1)
         id = int(channel_id)
         await db.update_forward_channel(user_id, id)      
-        await message.reply_text(f"<b>Successfully set channel ID to {id}</b>")
+        await message.reply_text(f"<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ\n\n<code>{id}</code></b>")
     except ValueError:
-        await message.reply_text("<b>Invalid channel ID. Please provide a valid integer.</b>")
+        await message.reply_text("<b>ꜱᴇɴᴅ ᴄʜᴀɴɴᴇʟ ɪᴅ ᴡɪᴛʜ ᴄᴏᴍᴍᴀɴᴅ\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ᴄʜᴀɴɴᴇʟ</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
@@ -79,7 +79,7 @@ async def remove_channel(client, message):
     user_id = message.from_user.id
     try:
         await db.remove_forward_channel(user_id)
-        await message.reply_text("<b>Channel ID removed successfully.</b>")
+        await message.reply_text("<b>ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ ʀᴇᴍᴏᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ✅️</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
@@ -92,11 +92,12 @@ async def info(client, message):
     user_id = message.from_user.id
     user = await db.get_user(user_id)
     if user:
-        text = f"""Shortener API - `{user['shortener_api']}`
+        text = f"""ꜱʜᴏʀᴛᴇɴᴇʀ - `{user['base_site']}`
+ᴀᴘɪ - `{user['shortener_api']}`
 
-Base Site - `{user['base_site']}`
+ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{user.get('channel_id')}`
 
-Forward Channel - `{user.get('channel_id')}`"""
+ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user['caption']}`"""
         await message.reply_text(text, reply_markup=reply_markup)
  
 @Bot.on_message(filters.command("start") & filters.private)
