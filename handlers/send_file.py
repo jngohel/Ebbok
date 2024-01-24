@@ -77,20 +77,20 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     file_er_id = str(file_id)
                     share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
                     short_link = await db.get_shortlink(user, share_link)
-                    caption = user['caption'].format(
-                        file_name=file_name,
-                        file_size=get_size(file_size),
-                        duration=duration,
-                        short_link=short_link
-                    ) if duration else user['caption'].format(
-                        file_name=file_name,
-                        file_size=get_size(file_size),
-                        short_link=short_link
-                    )
+
                     forwarded_msg = await bot.send_cached_media(
                         chat_id=user_id,
                         file_id=file_id,
-                        caption=caption
+                        caption=user['caption'].format(
+                            file_name=file_name,
+                            file_size=get_size(file_size),
+                            duration=duration,
+                            short_link=short_link
+                        ) if duration else user['caption'].format(
+                            file_name=file_name,
+                            file_size=get_size(file_size),
+                            short_link=short_link
+                        )
                     )
                 except FloodWait as e:
                     await asyncio.sleep(e.value)
