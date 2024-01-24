@@ -32,7 +32,7 @@ async def reply_forward(message: Message, file_id: int):
 async def media_forward(bot: Client, user_id: int, file_id: int):
     try:
         if FORWARD_AS_COPY is True:
-            return await bot.copy_message(
+            forwarded_msg = await bot.copy_message(
                 chat_id=user_id,
                 from_chat_id=DB_CHANNEL,
                 message_id=file_id
@@ -74,18 +74,27 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     print(f"File info fetch error: {e}")
                     return
                 try:
-                    await bot.send_cached_media(
+                    file_er_id = str(file_id)
+                    share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
+                    short_link = await db.get_shortlink(user, share_link)
+
+                    forwarded_msg = await bot.send_cached_media(
                         chat_id=user_id,
                         file_id=file_id,
                         caption=user['caption'].format(
                             file_name=file_name,
                             file_size=get_size(file_size),
-                            duration=duration
+                            duration=duration,
+                            short_link=short_link
                         ) if duration else user['caption'].format(
                             file_name=file_name,
-                            file_size=get_size(file_size)
+                            file_size=get_size(file_size),
+                            short_link=short_link
                         )
                     )
+                except FloodWait as e:
+                    await asyncio.sleep(e.value)
+                    return await media_forward(bot, user_id, file_id)
                 except Exception as e:
                     print(f"File send error: {e}")
             else:
@@ -94,9 +103,8 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     from_chat_id=DB_CHANNEL,
                     message_ids=file_id
                 )
-    except FloodWait as e:
-        await asyncio.sleep(e.value)
-        return await media_forward(bot, user_id, file_id)
+    except Exception as e:
+        print(f"Error in media_forward: {e}")
 
 async def send_media_and_reply(bot: Client, user_id: int, file_id: int):
     sent_message = await media_forward(bot, user_id, file_id)
