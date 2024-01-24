@@ -32,41 +32,8 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         await msg.delete()
         forwarded_msg = await message.forward(DB_CHANNEL)
         file_er_id = str(forwarded_msg.id)
-        file_id = forwarded_msg.document.file_id if forwarded_msg.document else (
-            forwarded_msg.video.file_id if forwarded_msg.video else (
-                forwarded_msg.audio.file_id if forwarded_msg.audio else None
-            )
-        )
-        if file_id:
-            file = await bot.get_messages(
-                chat_id=DB_CHANNEL,
-                message_ids=file_id
-            )
-
-            if file.document:
-                file_name = file.document.file_name
-                file_size = file.document.file_size
-                file_id = file.document.file_id
-                duration = file.document.duration if hasattr(file.document, 'duration') else None
-            elif file.video:
-                file_name = file.video.file_name
-                file_size = file.video.file_size
-                file_id = file.video.file_id
-                duration = file.video.duration if hasattr(file.video, 'duration') else None
-            elif file.audio:
-                file_name = file.audio.file_name
-                file_size = file.audio.file_size
-                file_id = file.audio.file_id
-                duration = file.audio.duration if hasattr(file.audio, 'duration') else None
-            else:
-                return await bot.forward_messages(
-                    chat_id=message.from_user.id,
-                    from_chat_id=DB_CHANNEL,
-                    message_ids=file_id
-                )
         user_id = message.from_user.id
         user = await db.get_user(user_id)
-        caption = user.get('caption')
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
         short_link = await db.get_shortlink(user, share_link)
         btn = [[
@@ -74,7 +41,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=short_link)
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
-        msg = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}\n\n{caption}</b>"
+        msg = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
         await editable.reply_text(
             text=msg,
             reply_markup=reply_markup,
