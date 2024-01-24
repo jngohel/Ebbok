@@ -32,12 +32,12 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         await msg.delete()
         forwarded_msg = await message.forward(DB_CHANNEL)
         file_er_id = str(forwarded_msg.id)
-        format = forwarded_msg.document.file_id if forwarded_msg.document else (
+        file_id = forwarded_msg.document.file_id if forwarded_msg.document else (
             forwarded_msg.video.file_id if forwarded_msg.video else (
                 forwarded_msg.audio.file_id if forwarded_msg.audio else None
             )
         )
-        if format:
+        if file_id:
             file = await bot.get_messages(
                 chat_id=DB_CHANNEL,
                 message_ids=file_id
