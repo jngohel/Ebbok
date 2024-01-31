@@ -65,7 +65,7 @@ async def set_shortlink(client, message):
 async def remove_shortener(client, message):
     user_id = message.from_user.id
     try:
-        await db.update_user_info(user_id, {'base_site': SHORTENER_WEBSITE, 'shortener_api': SHORTENER_API})
+        await db.remove_shortener(user_id)
         await message.reply_text("<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ʏᴏᴜʀ ꜱʜᴏʀᴛᴇɴᴇʀ ʀᴇᴍᴏᴠᴇᴅ ᴀɴᴅ ᴀᴅᴅᴇᴅ ᴅᴇꜰᴀᴜʟᴛ ᴅᴀᴛᴀ</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
