@@ -49,12 +49,8 @@ class Database:
     async def remove_shortener(self, user_id):
         user_id = int(user_id)
         my_query = {"user_id": user_id}
-        user_data = await self.get_user_info(user_id)
-        if not user_data.get("base_site") or not user_data.get("shortener_api"):
-            new_value = {"$set": {"base_site": SHORTENER_WEBSITE, "shortener_api": SHORTENER_API}}
-        else:
-            new_value = {"$unset": {"base_site": "", "shortener_api": ""}}
-        await self.col.update_one(my_query, new_value)
+        update_value = {"$unset": {"shortener_api": SHORTENER_API, "base_site": SHORTENER_WEBSITE}}
+        await self.col.update_one(my_query, update_value)
 
     async def get_user(self, user_id):
         user_id = int(user_id)
