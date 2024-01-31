@@ -6,7 +6,7 @@ from Script import script
 from pyrogram import Client, enums, filters
 from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
-from info import DB_CHANNEL, AUTH_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK
+from info import DB_CHANNEL, AUTH_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API
 from handlers.database import db
 from handlers.add_user_to_db import add_user_to_database
 from handlers.send_file import send_media_and_reply
@@ -60,6 +60,15 @@ async def set_shortlink(client, message):
     user_data = {'base_site': url, 'shortener_api': api}
     await db.update_user_info(user_id, user_data)
     await message.reply_text(f"<b>ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ꜱʜᴏʀᴛʟɪɴᴋ\n\nꜱʜᴏʀᴛʟɪɴᴋ - {url}\nᴀᴘɪ - `{api}`</b>")
+
+@Bot.on_message(filters.command("remove_shortener") & filters.private)
+async def remove_shortener(client, message):
+    user_id = message.from_user.id
+    try:
+        await db.update_user_info(user_id, {'base_site': SHORTENER_WEBSITE, 'shortener_api': SHORTENER_API})
+        await message.reply_text("<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ʏᴏᴜʀ ꜱʜᴏʀᴛᴇɴᴇʀ ʀᴇᴍᴏᴠᴇᴅ ᴀɴᴅ ᴀᴅᴅᴇᴅ ᴅᴇꜰᴀᴜʟᴛ ᴅᴀᴛᴀ</b>")
+    except Exception as e:
+        await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
 @Bot.on_message(filters.command("set_channel") & filters.private)
 async def set_channel(client, message):
