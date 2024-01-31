@@ -61,7 +61,7 @@ async def set_shortlink(client, message):
     await db.update_user_info(user_id, user_data)
     await message.reply_text(f"<b>ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ꜱʜᴏʀᴛʟɪɴᴋ\n\nꜱʜᴏʀᴛʟɪɴᴋ - {url}\nᴀᴘɪ - `{api}`</b>")
 
-@Bot.on_message(filters.command("remove_shortener") & filters.private)
+@Bot.on_message(filters.command("remove_shortner") & filters.private)
 async def remove_shortener(client, message):
     user_id = message.from_user.id
     try:
@@ -101,12 +101,12 @@ async def info(client, message):
     user_id = message.from_user.id
     user = await db.get_user(user_id)
     if user:
-        text = f"""ꜱʜᴏʀᴛᴇɴᴇʀ - `{user['base_site']}`
-ᴀᴘɪ - `{user['shortener_api']}`
+        text = f"""📊 ꜱʜᴏʀᴛᴇɴᴇʀ - `{user['base_site']}`
+‼️ ᴀᴘɪ - `{user['shortener_api']}`
 
-ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{user.get('channel_id')}`
+♻️ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{user.get('channel_id')}`
 
-ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user.get('caption')}`"""
+📝 ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user.get('caption')}`"""
         await message.reply_text(text, reply_markup=reply_markup)
  
 @Bot.on_message(filters.command("start") & filters.private)
