@@ -101,8 +101,8 @@ async def info(client, message):
     user_id = message.from_user.id
     user = await db.get_user(user_id)
     if user:
-        text = f"""📊 ꜱʜᴏʀᴛᴇɴᴇʀ - `{user['base_site']}`
-‼️ ᴀᴘɪ - `{user['shortener_api']}`
+        text = f"""📊 ꜱʜᴏʀᴛᴇɴᴇʀ - `{user.get('base_site', SHORTENER_WEBSITE}`
+‼️ ᴀᴘɪ - `{user.get('shortener_api', SHORTENER_API}`
 
 ♻️ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{user.get('channel_id')}`
 
