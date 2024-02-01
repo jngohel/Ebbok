@@ -6,7 +6,7 @@ from Script import script
 from pyrogram import Client, enums, filters
 from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
-from info import DB_CHANNEL, AUTH_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API
+from info import DB_CHANNEL, AUTH_CHANNEL, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API
 from handlers.database import db
 from handlers.add_user_to_db import add_user_to_database
 from handlers.send_file import send_media_and_reply
@@ -111,49 +111,39 @@ async def info(client, message):
  
 @Bot.on_message(filters.command("start") & filters.private)
 async def start(bot: Client, cmd: Message):
-    if cmd.from_user.id in BANNED_USERS:
-        await cmd.reply_text("Sorry, You are banned.")
-        return
-    if AUTH_CHANNEL is not None:
-        back = await handle_force_sub(bot, cmd)
-        if back == 400:
-            return    
-    usr_cmd = cmd.text.split("_", 1)[-1]
-    if usr_cmd == "/start":
-        await add_user_to_database(bot, cmd)
-        btn = [[
-            InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ", url=UPDATES_CHANNEL_LINK),
-            InlineKeyboardButton("ꜱᴜᴘᴘᴏʀᴛ", url=SUPPORT_GROUP_LINK)
-        ],[
-            InlineKeyboardButton("🎲 ғᴇᴀᴛᴜʀᴇꜱ 🎲", callback_data="features")
-        ]]
-        reply_markup=InlineKeyboardMarkup(btn)
-        await cmd.reply_text(
-            script.START_TEXT,
-            disable_web_page_preview=True,
-            reply_markup=reply_markup
-        )
-    else:
-        try:
-            try:
-                file_id = int(b64_to_str(usr_cmd).split("_")[-1])
-            except (Error, UnicodeDecodeError):
-                file_id = int(usr_cmd.split("_")[-1])
-            GetMessage = await bot.get_messages(chat_id=DB_CHANNEL, message_ids=file_id)
-            message_ids = []
-            if GetMessage.text:
-                message_ids = GetMessage.text.split(" ")
-                _response_msg = await cmd.reply_text(
-                    text=f"**Total Files:** `{len(message_ids)}`",
-                    quote=True,
-                    disable_web_page_preview=True
-                )
-            else:
-                message_ids.append(int(GetMessage.id))
+    try:
+        if AUTH_CHANNEL is not None:
+            back = await handle_force_sub(bot, cmd)
+            if back == 400:
+                return
+        usr_cmd = cmd.text.split("_", 1)[-1]        
+        if usr_cmd == "/start":
+            await add_user_to_database(bot, cmd)
+            btn = [[
+                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ", url=UPDATES_CHANNEL_LINK),
+                InlineKeyboardButton("ꜱᴜᴘᴘᴏʀᴛ", url=SUPPORT_GROUP_LINK)
+            ], [
+                InlineKeyboardButton("🎲 ғᴇᴀᴛᴜʀᴇꜱ 🎲", callback_data="features")
+            ]]
+            reply_markup = InlineKeyboardMarkup(btn)
+            await cmd.reply_text(
+                script.START_TEXT,
+                disable_web_page_preview=True,
+                reply_markup=reply_markup
+            )
+        else:
+            file_id = int(b64_to_str(usr_cmd).split("_")[-1]) if "_" in usr_cmd else int(usr_cmd.split("_")[-1])
+            get_message = await bot.get_messages(chat_id=DB_CHANNEL, message_ids=file_id)
+            message_ids = [int(get_message.id)] if not get_message.text else list(map(int, get_message.text.split()))            
+            response_msg = await cmd.reply_text(
+                text=f"**Total Files:** `{len(message_ids)}`",
+                quote=True,
+                disable_web_page_preview=True
+            )            
             for i in range(len(message_ids)):
                 await send_media_and_reply(bot, user_id=cmd.from_user.id, file_id=int(message_ids[i]))
-        except Exception as e:
-            print(e)
+    except Exception as e:
+        print(f"Error: {e}")
 
 @Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(DB_CHANNEL))
 async def main(bot: Client, message: Message):
@@ -163,29 +153,22 @@ async def main(bot: Client, message: Message):
             back = await handle_force_sub(bot, message)
             if back == 400:
                 return
-        if message.from_user.id in BANNED_USERS:
-            await message.reply_text(
-                text="Sorry, You are banned!",
-                disable_web_page_preview=True)
-            return
-
         if OTHER_USERS_CAN_SAVE_FILE is False:
             return
-
         btn = [[
             InlineKeyboardButton("ʙᴀᴛᴄʜ ʟɪɴᴋ", callback_data="genratebatchlink")
         ],[
             InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", callback_data="sharable_mode")
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
-        if message.document and message.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
-            thumb = message.document.thumbs[0] #fetch thumb
-        elif message.video and message.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
-            thumb = message.video.thumbs[0] #fetch thumb
-        elif message.audio and message.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
-            thumb = message.audio.thumbs[0] #fetch thumb
+        if message.document and message.document.thumbs[0]:
+            thumb = message.document.thumbs[0]
+        elif message.video and message.video.thumbs[0]:
+            thumb = message.video.thumbs[0]
+        elif message.audio and message.audio.thumbs[0]:
+            thumb = message.audio.thumbs[0]
         else:
-            thumb = None #if file_type is not in ['document', 'video', 'audio']: assign None to thumb var
+            thumb = None
         if thumb is None:
             await message.reply_text(
                 text="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏꜱᴇ ʜᴇʀᴇ 👇</b>",
@@ -194,7 +177,7 @@ async def main(bot: Client, message: Message):
                 disable_web_page_preview=True
             )
         else:
-            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
+            thumb_jpg = await bot.download_media(thumb)
             await message.reply_photo(
                 photo=thumb_jpg,
                 caption="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏꜱᴇ ʜᴇʀᴇ 👇</b>",
@@ -202,7 +185,7 @@ async def main(bot: Client, message: Message):
                 quote=True,
                 parse_mode=enums.ParseMode.HTML
             )
-            os.remove(thumb_jpg) #remove thumb from current working dir
+            os.remove(thumb_jpg)
     elif message.chat.type == enums.ChatType.CHANNEL:
         if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(AUTH_CHANNEL)) or message.forward_from_chat or message.forward_from:
             return
@@ -210,44 +193,7 @@ async def main(bot: Client, message: Message):
             await bot.leave_chat(message.chat.id)
             return
         else:
-            pass
-
-        try:
-            forwarded_msg = await message.forward(DB_CHANNEL)
-            file_er_id = str(forwarded_msg.id)
-            share_link = f"https://t.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
-            CH_edit = await bot.edit_message_reply_markup(
-                message.chat.id, 
-                message.id,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", url=share_link)
-                        ]
-                    ]
-                )
-            )
-            if message.chat.username:
-                await forwarded_msg.reply_text(
-                    f"#CHANNEL_BUTTON:\n\n[{message.chat.title}](https://t.me/{message.chat.username}/{CH_edit.id}) Channel's Broadcasted File's Button Added!")
-            else:
-                private_ch = str(message.chat.id)[4:]
-                await forwarded_msg.reply_text(
-                    f"#CHANNEL_BUTTON:\n\n[{message.chat.title}](https://t.me/c/{private_ch}/{CH_edit.id}) Channel's Broadcasted File's Button Added!")
-        except FloodWait as sl:
-            await asyncio.sleep(sl.value)
-            await bot.send_message(
-                chat_id=int(LOG_CHANNEL),
-                text=f"#FloodWait:\nGot FloodWait of `{str(sl.value)}s` from `{str(message.chat.id)}` !!",
-                disable_web_page_preview=True
-            )
-        except Exception as err:
-            await bot.leave_chat(message.chat.id)
-            await bot.send_message(
-                chat_id=int(LOG_CHANNEL),
-                text=f"#ERROR_TRACEBACK:\nGot Error from `{str(message.chat.id)}` !!\n\n**Traceback:** `{err}`",
-                disable_web_page_preview=True
-            )
+            pass        
 
 @Bot.on_message(filters.private & filters.command("broadcast") & filters.user(BOT_OWNER) & filters.reply)
 async def broadcast_handler_open(_, m: Message):
@@ -257,104 +203,6 @@ async def broadcast_handler_open(_, m: Message):
 async def sts(_, m: Message):
     users = await db.total_users_count()
     await m.reply_text(text=f"Total users - <code>`{users}</code></b>")
-
-@Bot.on_message(filters.private & filters.command("ban_user") & filters.user(BOT_OWNER))
-async def ban(c: Client, m: Message):
-    if len(m.command) == 1:
-        await m.reply_text(
-            f"Use this command to ban any user from the bot.\n\n"
-            f"Usage:\n\n"
-            f"`/ban_user user_id ban_duration ban_reason`\n\n"
-            f"Eg: `/ban_user 1234567 28 You misused me.`\n"
-            f"This will ban user with id `1234567` for `28` days for the reason `You misused me`.",
-            quote=True
-        )
-        return
-    try:
-        user_id = int(m.command[1])
-        ban_duration = int(m.command[2])
-        ban_reason = ' '.join(m.command[3:])
-        ban_log_text = f"Banning user {user_id} for {ban_duration} days for the reason {ban_reason}."
-        try:
-            await c.send_message(
-                user_id,
-                f"You are banned to use this bot for **{ban_duration}** day(s) for the reason __{ban_reason}__ \n\n"
-                f"**Message from the admin**"
-            )
-            ban_log_text += '\n\nUser notified successfully!'
-        except:
-            traceback.print_exc()
-            ban_log_text += f"\n\nUser notification failed! \n\n`{traceback.format_exc()}`"
-        await db.ban_user(user_id, ban_duration, ban_reason)
-        print(ban_log_text)
-        await m.reply_text(
-            ban_log_text,
-            quote=True
-        )
-    except:
-        traceback.print_exc()
-        await m.reply_text(
-            f"Error occoured! Traceback given below\n\n`{traceback.format_exc()}`",
-            quote=True
-        )
-
-@Bot.on_message(filters.private & filters.command("unban_user") & filters.user(BOT_OWNER))
-async def unban(c: Client, m: Message):
-    if len(m.command) == 1:
-        await m.reply_text(
-            f"Use this command to unban any user.\n\n"
-            f"Usage:\n\n`/unban_user user_id`\n\n"
-            f"Eg: `/unban_user 1234567`\n"
-            f"This will unban user with id `1234567`.",
-            quote=True
-        )
-        return
-    try:
-        user_id = int(m.command[1])
-        unban_log_text = f"Unbanning user {user_id}"
-        try:
-            await c.send_message(
-                user_id,
-                f"Your ban was lifted!"
-            )
-            unban_log_text += '\n\nUser notified successfully!'
-        except:
-            traceback.print_exc()
-            unban_log_text += f"\n\nUser notification failed! \n\n`{traceback.format_exc()}`"
-        await db.remove_ban(user_id)
-        print(unban_log_text)
-        await m.reply_text(
-            unban_log_text,
-            quote=True
-        )
-    except:
-        traceback.print_exc()
-        await m.reply_text(
-            f"Error occurred! Traceback given below\n\n`{traceback.format_exc()}`",
-            quote=True
-        )
-
-@Bot.on_message(filters.private & filters.command("banned_users") & filters.user(BOT_OWNER))
-async def _banned_users(_, m: Message):    
-    all_banned_users = await db.get_all_banned_users()
-    banned_usr_count = 0
-    text = ''
-    async for banned_user in all_banned_users:
-        user_id = banned_user['id']
-        ban_duration = banned_user['ban_status']['ban_duration']
-        banned_on = banned_user['ban_status']['banned_on']
-        ban_reason = banned_user['ban_status']['ban_reason']
-        banned_usr_count += 1
-        text += f"> **user_id**: `{user_id}`, **Ban Duration**: `{ban_duration}`, " \
-                f"**Banned on**: `{banned_on}`, **Reason**: `{ban_reason}`\n\n"
-    reply_text = f"Total banned user(s): `{banned_usr_count}`\n\n{text}"
-    if len(reply_text) > 4096:
-        with open('banned-users.txt', 'w') as f:
-            f.write(reply_text)
-        await m.reply_document('banned-users.txt', True)
-        os.remove('banned-users.txt')
-        return
-    await m.reply_text(reply_text, True)
 
 @Bot.on_message(filters.private & filters.command("clear_batch"))
 async def clear_user_batch(bot: Client, m: Message):
