@@ -1,4 +1,4 @@
-from info import LOG_CHANNEL
+from info import LOG_CHANNEL, BOT_USERNAME
 from handlers.database import db
 from pyrogram import Client
 from pyrogram.types import Message
@@ -9,5 +9,5 @@ async def add_user_to_database(bot: Client, cmd: Message):
         if LOG_CHANNEL is not None:
             await bot.send_message(
                 int(LOG_CHANNEL),
-                f"#NEW_USER: \n\nNew User [{cmd.from_user.first_name}](tg://user?id={cmd.from_user.id}) started @{Config.BOT_USERNAME} !!"
+                f"#NEW_USER: \n\nNew User [{cmd.from_user.first_name}](tg://user?id={cmd.from_user.id}) started @{BOT_USERNAME} !!"
             )
