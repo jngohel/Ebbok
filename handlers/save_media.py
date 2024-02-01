@@ -71,25 +71,12 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         if sl.value > 45:
             print(f"Sleep of {sl.value}s caused by FloodWait ...")
             await asyncio.sleep(sl.value)
-            await bot.send_message(
-                chat_id=int(LOG_CHANNEL),
-                text="#FloodWait:\n"
-                     f"Got FloodWait of `{str(sl.value)}s` from `{str(editable.chat.id)}` !!",
-                disable_web_page_preview=True
-            )
         await save_media_in_channel(bot, editable, message)
     except Exception as err:
         print(traceback.format_exc())
         await editable.edit_caption(
             caption=f"Something Went Wrong!\n\n**Error:** `{err}`",
             parse_mode=enums.ParseMode.MARKDOWN
-        )
-        await bot.send_message(
-            chat_id=int(LOG_CHANNEL),
-            text="#ERROR_TRACEBACK:\n"
-                 f"Got Error from `{str(editable.chat.id)}` !!\n\n"
-                 f"**Traceback:** `{err}`",
-            disable_web_page_preview=True
         )
 
 async def save_batch_media_in_channel(bot: Client, editable: Message, message_ids: list):
@@ -134,27 +121,9 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
                 ]
             )
         )
-        await bot.send_message(
-            chat_id=int(LOG_CHANNEL),
-            text=f"#BATCH_SAVE:\n\n[{editable.reply_to_message.from_user.first_name}](tg://user?id={editable.reply_to_message.from_user.id}) Got Batch Link!",
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Original Link", url=share_link),
-                        InlineKeyboardButton("Short Link", url=short_link)
-                    ]
-                ]
-            )
-        )
     except Exception as err:
         print(err)
         await editable.edit_caption(
             caption=f"Something Went Wrong!\n\n**Error:** `{err}`",
             parse_mode=enums.ParseMode.MARKDOWN
-        )
-        await bot.send_message(
-            chat_id=int(LOG_CHANNEL),
-            text=f"#ERROR_TRACEBACK:\nGot Error from `{str(editable.chat.id)}` !!\n\n**Traceback:** `{err}`",
-            disable_web_page_preview=True
         )
