@@ -9,6 +9,12 @@ from pyrogram.errors import FloodWait
 from handlers.helpers import str_to_b64
 from handlers.database import db
 
+def s2time(time):
+    hr = time//3600
+    mint = (time-3600)//60
+    sec = (time-3600) - (60*((time-3600)//60))
+    return f"{hr}:{mint}:{sec}"
+
 def get_size(size):
     units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
     size = float(size)
@@ -53,17 +59,17 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                         file_name = file.document.file_name
                         file_size = file.document.file_size
                         file_id = file.document.file_id
-                        duration = file.document.duration if hasattr(file.document, 'duration') else None
+                        duration = s2time(file.document.duration) if hasattr(file.document, 'duration') else None
                     elif file and file.video:
                         file_name = file.video.file_name
                         file_size = file.video.file_size
                         file_id = file.video.file_id
-                        duration = file.video.duration if hasattr(file.video, 'duration') else None
+                        duration = s2time(file.video.duration) if hasattr(file.video, 'duration') else None
                     elif file and file.audio:
                         file_name = file.audio.file_name
                         file_size = file.audio.file_size
                         file_id = file.audio.file_id
-                        duration = file.audio.duration if hasattr(file.audio, 'duration') else None
+                        duration = s2time(file.audio.duration) if hasattr(file.audio, 'duration') else None
                     else:
                         return await bot.forward_messages(
                             chat_id=user_id,
