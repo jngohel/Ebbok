@@ -74,6 +74,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             reply_markup=reply_markup
         )
         if user.get("channel_id"):
+            channel_id = user["channel_id"]
             await edited_thumb.copy(channel_id)
     except FloodWait as sl:
         if sl.value > 45:
