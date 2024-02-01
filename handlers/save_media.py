@@ -65,16 +65,17 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
         ]]
-        if message.chat.type == enums.ChatType.PRIVATE:
-            reply_markup = InlineKeyboardMarkup(pm_btn)
-        else:
-            reply_markup = InlineKeyboardMarkup(channel_btn)
+        if user.get("channel_id"):
+            channel_id = user["channel_id"]
+            if message.chat.type == enums.ChatType.PRIVATE:
+                reply_markup = InlineKeyboardMarkup(pm_btn)
+            else:
+                reply_markup = InlineKeyboardMarkup(channel_btn)
         edited_thumb = await editable.edit_caption(
             caption=msg,
             reply_markup=reply_markup
         )
         if user.get("channel_id"):
-            channel_id = user["channel_id"]
             await edited_thumb.copy(channel_id)
     except FloodWait as sl:
         if sl.value > 45:
