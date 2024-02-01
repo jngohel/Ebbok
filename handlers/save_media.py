@@ -4,7 +4,7 @@ from pyrogram import Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
 from handlers.helpers import str_to_b64
-from handlers.send_file import get_size
+from handlers.send_file import get_size, s2time
 import traceback
 from handlers.database import db
     
@@ -39,15 +39,15 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         if getFile and getFile.document:
             file_name = getFile.document.file_name
             file_size = getFile.document.file_size
-            duration = getFile.document.duration if hasattr(getFile.document, 'duration') else None
+            duration = s2time(getFile.document.duration) if hasattr(getFile.document, 'duration') else None
         elif getFile and getFile.video:
             file_name = getFile.video.file_name
             file_size = getFile.video.file_size
-            duration = getFile.video.duration if hasattr(getFile.video, 'duration') else None
+            duration = s2time(getFile.video.duration) if hasattr(getFile.video, 'duration') else None
         elif getFile and getFile.audio:
             file_name = getFile.audio.file_name
             file_size = getFile.audio.file_size
-            duration = getFile.audio.duration if hasattr(getFile.audio, 'duration') else None
+            duration = s2time(getFile.audio.duration) if hasattr(getFile.audio, 'duration') else None
         else:
             file_name = 'None'
             file_size = 'None'
