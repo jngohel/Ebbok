@@ -30,30 +30,13 @@ Bot = Client(
 async def _(bot: Client, cmd: Message):
     await handle_user_status(bot, cmd)
 
-@Bot.on_message(filters.command("....") & filters.private)
-async def set_caption(client, message):
-    user_id = message.from_user.id
-    try:
-        caption = (message.text).split(" ", 1)[1]
-    except IndexError:
-        return await message.reply_text("<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴄᴀᴘᴛɪᴏɴ ᴀʟᴏɴɢ ᴡɪᴛʜ ɪᴛ.\n\nᴇxᴀᴍᴘʟᴇ -\n\nꜰᴏʀ ꜰɪʟᴇ ᴅᴜʀᴀᴛɪᴏɴ ꜱᴇɴᴅ <code>{duration}</code>\nꜰᴏʀ ꜰɪʟᴇ ɴᴀᴍᴇ ꜱᴇɴᴅ <code>{file_name}</code>\nꜰᴏʀ ꜰɪʟᴇ ꜱɪᴢᴇ ꜱᴇɴᴅ <code>{file_size}</code>\n\n<code>/set_caption {file_name}</code></b>")
-    else:
-        await db.custom_file_caption(user_id, caption)
-        return await message.reply_text(f"<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ\n\n<code>{caption}</code></b>")
-
 @Bot.on_message(filters.command("set_caption") & filters.private)
 async def set_caption(client, message):
     user_id = message.from_user.id
     try:
         caption = (message.text).split(" ", 1)[1]
-        allowed = {'{short_link}', '{file_size}', '{file_name}', '{duration}'}
-        used = {word for word in caption.split() if word.startswith('{') and word.endswith('}')}
-        if not used.issubset(allowed):
-            raise ValueError("Invalid placeholders used in the caption.")
     except IndexError:
         return await message.reply_text("<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴄᴀᴘᴛɪᴏɴ ᴀʟᴏɴɢ ᴡɪᴛʜ ɪᴛ.\n\nᴇxᴀᴍᴘʟᴇ -\n\nꜰᴏʀ ꜰɪʟᴇ ᴅᴜʀᴀᴛɪᴏɴ ꜱᴇɴᴅ <code>{duration}</code>\nꜰᴏʀ ꜰɪʟᴇ ɴᴀᴍᴇ ꜱᴇɴᴅ <code>{file_name}</code>\nꜰᴏʀ ꜰɪʟᴇ ꜱɪᴢᴇ ꜱᴇɴᴅ <code>{file_size}</code>\n\n<code>/set_caption {file_name}</code></b>")
-    except ValueError:
-        return await message.reply_text("<b>Invalid placeholders used in the caption. Please use only {short_link}, {file_size}, {file_name}, {duration}.</b>")
     else:
         await db.custom_file_caption(user_id, caption)
         return await message.reply_text(f"<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ\n\n<code>{caption}</code></b>")
