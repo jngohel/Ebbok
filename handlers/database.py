@@ -49,7 +49,7 @@ class Database:
     async def remove_shortener(self, user_id):
         user_id = int(user_id)
         my_query = {"user_id": user_id}
-        update_value = {"$unset": {"api_key": SHORTENER_API, "base_site": SHORTENER_WEBSITE}}
+        update_value = {"$unset": {"base_site": "", "shortener_api": ""}}
         await self.col.update_one(my_query, update_value)
 
     async def get_user(self, user_id):
