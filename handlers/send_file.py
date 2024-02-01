@@ -98,7 +98,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 except Exception as e:
                     print(f"File send error: {e}")
             else:
-                await bot.forward_messages(
+                return await bot.forward_messages(
                     chat_id=user_id,
                     from_chat_id=DB_CHANNEL,
                     message_ids=file_id

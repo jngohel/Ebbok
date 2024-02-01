@@ -35,8 +35,14 @@ class Database:
         await self.col.insert_one(user)
 
     async def get_shortlink(self, user, link):
-        base_site = user["base_site"]
-        api_key = user["shortener_api"]
+        if 'base_site' in user.keys():
+            base_site = user["base_site"]
+        else:
+            base_site = None
+        if 'shortener_api' in user.keys():
+            api_key = user["shortener_api"]
+        else:
+            api_key = None
         if not base_site or not api_key:
             base_site = SHORTENER_WEBSITE
             api_key = SHORTENER_API
