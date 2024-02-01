@@ -18,12 +18,7 @@ async def forward_to_channel(bot: Client, message: Message, editable: Message):
             await bot.send_message(
                 chat_id=int(LOG_CHANNEL),
                 text=f"#FloodWait:\nGot FloodWait of `{str(sl.value)}s` from `{str(editable.chat.id)}` !!",
-                disable_web_page_preview=True,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [InlineKeyboardButton("Ban User", callback_data=f"ban_user_{str(editable.chat.id)}")]
-                    ]
-                )
+                disable_web_page_preview=True
             )
         return await forward_to_channel(bot, message, editable)
 
@@ -58,7 +53,6 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
         short_link = await db.get_shortlink(user, share_link)
         caption = user.get('caption')
-        print(f"DEBUG: {caption}")
         default_caption = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
         msg = caption.format(short_link=short_link, file_name=file_name, file_size=get_size(file_size), duration=duration) if caption else default_caption
         btn = [[
@@ -81,14 +75,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
                 chat_id=int(LOG_CHANNEL),
                 text="#FloodWait:\n"
                      f"Got FloodWait of `{str(sl.value)}s` from `{str(editable.chat.id)}` !!",
-                disable_web_page_preview=True,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton("Ban User", callback_data=f"ban_user_{str(editable.chat.id)}")
-                        ]
-                    ]
-                )
+                disable_web_page_preview=True
             )
         await save_media_in_channel(bot, editable, message)
     except Exception as err:
@@ -102,14 +89,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             text="#ERROR_TRACEBACK:\n"
                  f"Got Error from `{str(editable.chat.id)}` !!\n\n"
                  f"**Traceback:** `{err}`",
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Ban User", callback_data=f"ban_user_{str(editable.chat.id)}")
-                    ]
-                ]
-            )
+            disable_web_page_preview=True
         )
 
 async def save_batch_media_in_channel(bot: Client, editable: Message, message_ids: list):
@@ -176,12 +156,5 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
         await bot.send_message(
             chat_id=int(LOG_CHANNEL),
             text=f"#ERROR_TRACEBACK:\nGot Error from `{str(editable.chat.id)}` !!\n\n**Traceback:** `{err}`",
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Ban User", callback_data=f"ban_user_{str(editable.chat.id)}")
-                    ]
-                ]
-            )
+            disable_web_page_preview=True
         )
