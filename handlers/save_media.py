@@ -78,7 +78,10 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         await save_media_in_channel(bot, editable, message)
     except Exception as err:
         print(err)
-        await editable.edit(f"Something Went Wrong!\n\n**Error:** `{err}`")
+        await editable.edit_caption(
+            caption=f"Something Went Wrong!\n\n**Error:** `{err}`",
+            parse_mode=enums.ParseMode.MARKDOWN
+        )
         await bot.send_message(
             chat_id=int(LOG_CHANNEL),
             text="#ERROR_TRACEBACK:\n"
@@ -151,7 +154,10 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
         )
     except Exception as err:
         print(err)
-        await editable.edit(f"Something Went Wrong!\n\n**Error:** `{err}`")
+        await editable.edit_caption(
+            caption=f"Something Went Wrong!\n\n**Error:** `{err}`",
+            parse_mode=enums.ParseMode.MARKDOWN
+        )
         await bot.send_message(
             chat_id=int(LOG_CHANNEL),
             text=f"#ERROR_TRACEBACK:\nGot Error from `{str(editable.chat.id)}` !!\n\n**Traceback:** `{err}`",
