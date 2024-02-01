@@ -178,12 +178,31 @@ async def main(bot: Client, message: Message):
             InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", callback_data="sharable_mode")
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
-        await message.reply_text(
-            text="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏꜱᴇ ʜᴇʀᴇ 👇</b>",
-            reply_markup=reply_markup,
-            quote=True,
-            disable_web_page_preview=True
-        )
+        if message.document and message.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
+            thumb = message.document.thumbs[0] #fetch thumb
+        elif message.video and message.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
+            thumb = message.video.thumbs[0] #fetch thumb
+        elif message.audio and message.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
+            thumb = message.audio.thumbs[0] #fetch thumb
+        else:
+            thumb = None #if file_type is not in ['document', 'video', 'audio']: assign None to thumb var
+        if thumb is None:
+            await message.reply_text(
+                text="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏꜱᴇ ʜᴇʀᴇ 👇</b>",
+                reply_markup=reply_markup,
+                quote=True,
+                disable_web_page_preview=True
+            )
+        else:
+            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
+            await message.reply_photo(
+                photo=thumb_jpg,
+                caption="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏꜱᴇ ʜᴇʀᴇ 👇</b>",
+                reply_markup=reply_markup,
+                quote=True,
+                parse_mode=enums.ParseMode.HTML
+            )
+            os.remove(thumb_jpg) #remove thumb from current working dir
     elif message.chat.type == enums.ChatType.CHANNEL:
         if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(AUTH_CHANNEL)) or message.forward_from_chat or message.forward_from:
             return

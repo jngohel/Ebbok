@@ -1,6 +1,6 @@
 import asyncio
 from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME
-from pyrogram import Client
+from pyrogram import Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
 from handlers.helpers import str_to_b64
@@ -27,9 +27,11 @@ async def forward_to_channel(bot: Client, message: Message, editable: Message):
 
 async def save_media_in_channel(bot: Client, editable: Message, message: Message):
     try:
-        msg = await editable.edit("<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>")
+        msg = await editable.edit_caption(
+            caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
+            parse_mode=enums.ParseMode.HTML
+        )
         await asyncio.sleep(5)
-        await msg.delete()
         forwarded_msg = await message.forward(DB_CHANNEL)
         file_er_id = str(forwarded_msg.id)
         user_id = message.from_user.id
@@ -44,10 +46,9 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=short_link)
         ]]
         reply_markup = InlineKeyboardMarkup(btn)    
-        await editable.reply_text(
-            text=msg,
-            reply_markup=reply_markup,
-            disable_web_page_preview=True
+        await editable.edit_caption(
+            caption=msg,
+            reply_markup=reply_markup
         )
         if user.get("channel_id"):
             channel_id = user["channel_id"]
@@ -102,9 +103,11 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
                 continue
             message_ids_str += f"{str(sent_message.id)} "
             await asyncio.sleep(2)
-            msg = await editable.edit("<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>")
+            msg = await editable.edit_caption(
+                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
+                parse_mode=enums.ParseMode.HTML
+            )
             await asyncio.sleep(5)
-            await msg.delete()
         msg = await bot.send_message(
             chat_id=DB_CHANNEL,
             text=message_ids_str,
@@ -121,9 +124,9 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
         user = await db.get_user(user_id)
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(str(msg.id))}"
         short_link = await db.get_shortlink(user, share_link)
-        await editable.reply_text(
-            f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: <code>{short_link}</code> \n\n"
-            f"Just Click the link to get your files!",
+        await editable.edit_caption(
+            caption=f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: <code>{short_link}</code> \n\nJust Click the link to get your files!",
+            parse_mode=enums.ParseMode.MARKDOWN,
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
@@ -131,8 +134,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
                         InlineKeyboardButton("Short Link", url=short_link)
                     ]
                 ]
-            ),
-            disable_web_page_preview=True
+            )
         )
         await bot.send_message(
             chat_id=int(LOG_CHANNEL),
