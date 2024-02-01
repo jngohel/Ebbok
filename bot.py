@@ -274,21 +274,7 @@ async def button(bot: Client, cmd: CallbackQuery):
             disable_web_page_preview=True,
             reply_markup=reply_markup
         )
-
-    elif cb_data.startswith("ban_user_"):
-        user_id = cb_data.split("_", 2)[-1]
-        if AUTH_CHANNEL is None:
-            await cmd.answer("Sorry Sir, You didn't Set any Updates Channel!", show_alert=True)
-            return
-        if not int(cmd.from_user.id) == BOT_OWNER:
-            await cmd.answer("You are not allowed to do that!", show_alert=True)
-            return
-        try:
-            await bot.kick_chat_member(chat_id=int(AUTH_CHANNEL), user_id=int(user_id))
-            await cmd.answer("User Banned from Updates Channel!", show_alert=True)
-        except Exception as e:
-            await cmd.answer(f"Can't Ban Him!\n\nError: {e}", show_alert=True)
-
+        
     elif "genratebatchlink" in cb_data:
         if MediaList.get(f"{str(cmd.from_user.id)}", None) is None:
             MediaList[f"{str(cmd.from_user.id)}"] = []
