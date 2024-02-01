@@ -11,7 +11,7 @@ from handlers.database import db
 
 def s2time(time):
     hr = time//3600
-    mint = (time-3600)//60
+    mint = (time-(hr*3600))//60
     sec = (time-3600) - (60*((time-3600)//60))
     return f"{hr}:{mint}:{sec}"
 
