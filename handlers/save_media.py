@@ -4,6 +4,7 @@ from pyrogram import Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
 from handlers.helpers import str_to_b64
+import traceback
 from handlers.database import db
     
 async def forward_to_channel(bot: Client, message: Message, editable: Message):
@@ -77,7 +78,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             )
         await save_media_in_channel(bot, editable, message)
     except Exception as err:
-        print(err)
+        print(traceback.format_exc())
         await editable.edit_caption(
             caption=f"Something Went Wrong!\n\n**Error:** `{err}`",
             parse_mode=enums.ParseMode.MARKDOWN

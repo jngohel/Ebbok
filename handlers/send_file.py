@@ -78,7 +78,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
                     short_link = await db.get_shortlink(user, share_link)
 
-                    forwarded_msg = await bot.send_cached_media(
+                    return await bot.send_cached_media(
                         chat_id=user_id,
                         file_id=file_id,
                         caption=user['caption'].format(
