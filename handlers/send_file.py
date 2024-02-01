@@ -93,10 +93,6 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                             file_size=get_size(file_size),
                             duration=duration,
                             short_link=short_link
-                        ) if duration else user['caption'].format(
-                            file_name=file_name,
-                            file_size=get_size(file_size),
-                            short_link=short_link
                         )
                     )
                 except FloodWait as e:
