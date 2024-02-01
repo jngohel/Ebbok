@@ -111,46 +111,39 @@ async def info(client, message):
  
 @Bot.on_message(filters.command("start") & filters.private)
 async def start(bot: Client, cmd: Message):
-    if AUTH_CHANNEL is not None:
-        back = await handle_force_sub(bot, cmd)
-        if back == 400:
-            return    
-    usr_cmd = cmd.text.split("_", 1)[-1]
-    if usr_cmd == "/start":
-        await add_user_to_database(bot, cmd)
-        btn = [[
-            InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ", url=UPDATES_CHANNEL_LINK),
-            InlineKeyboardButton("ꜱᴜᴘᴘᴏʀᴛ", url=SUPPORT_GROUP_LINK)
-        ],[
-            InlineKeyboardButton("🎲 ғᴇᴀᴛᴜʀᴇꜱ 🎲", callback_data="features")
-        ]]
-        reply_markup=InlineKeyboardMarkup(btn)
-        await cmd.reply_text(
-            script.START_TEXT,
-            disable_web_page_preview=True,
-            reply_markup=reply_markup
-        )
-    else:
-        try:
-            try:
-                file_id = int(b64_to_str(usr_cmd).split("_")[-1])
-            except (Error, UnicodeDecodeError):
-                file_id = int(usr_cmd.split("_")[-1])
-            GetMessage = await bot.get_messages(chat_id=DB_CHANNEL, message_ids=file_id)
-            message_ids = []
-            if GetMessage.text:
-                message_ids = GetMessage.text.split(" ")
-                _response_msg = await cmd.reply_text(
-                    text=f"**Total Files:** `{len(message_ids)}`",
-                    quote=True,
-                    disable_web_page_preview=True
-                )
-            else:
-                message_ids.append(int(GetMessage.id))
+    try:
+        if AUTH_CHANNEL is not None:
+            back = await handle_force_sub(bot, cmd)
+            if back == 400:
+                return
+        usr_cmd = cmd.text.split("_", 1)[-1]        
+        if usr_cmd == "/start":
+            await add_user_to_database(bot, cmd)
+            btn = [[
+                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ", url=UPDATES_CHANNEL_LINK),
+                InlineKeyboardButton("ꜱᴜᴘᴘᴏʀᴛ", url=SUPPORT_GROUP_LINK)
+            ], [
+                InlineKeyboardButton("🎲 ғᴇᴀᴛᴜʀᴇꜱ 🎲", callback_data="features")
+            ]]
+            reply_markup = InlineKeyboardMarkup(btn)
+            await cmd.reply_text(
+                script.START_TEXT,
+                disable_web_page_preview=True,
+                reply_markup=reply_markup
+            )
+        else:
+            file_id = int(b64_to_str(usr_cmd).split("_")[-1]) if "_" in usr_cmd else int(usr_cmd.split("_")[-1])
+            get_message = await bot.get_messages(chat_id=DB_CHANNEL, message_ids=file_id)
+            message_ids = [int(get_message.id)] if not get_message.text else list(map(int, get_message.text.split()))            
+            response_msg = await cmd.reply_text(
+                text=f"**Total Files:** `{len(message_ids)}`",
+                quote=True,
+                disable_web_page_preview=True
+            )            
             for i in range(len(message_ids)):
                 await send_media_and_reply(bot, user_id=cmd.from_user.id, file_id=int(message_ids[i]))
-        except Exception as e:
-            print(e)
+    except Exception as e:
+        print(f"Error: {e}")
 
 @Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(DB_CHANNEL))
 async def main(bot: Client, message: Message):
