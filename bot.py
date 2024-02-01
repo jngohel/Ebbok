@@ -6,7 +6,7 @@ from Script import script
 from pyrogram import Client, enums, filters
 from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
-from info import DB_CHANNEL, AUTH_CHANNEL, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API
+from info import DB_CHANNEL, AUTH_CHANNEL, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, ADMINS, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API
 from handlers.database import db
 from handlers.add_user_to_db import add_user_to_database
 from handlers.send_file import send_media_and_reply
@@ -195,14 +195,14 @@ async def main(bot: Client, message: Message):
         else:
             pass        
 
-@Bot.on_message(filters.private & filters.command("broadcast") & filters.user(BOT_OWNER) & filters.reply)
+@Bot.on_message(filters.private & filters.command("broadcast") & filters.user(ADMINS) & filters.reply)
 async def broadcast_handler_open(_, m: Message):
     await main_broadcast_handler(m, db)
 
-@Bot.on_message(filters.private & filters.command("stats") & filters.user(BOT_OWNER))
+@Bot.on_message(filters.private & filters.command("stats") & filters.user(ADMINS))
 async def sts(_, m: Message):
     users = await db.total_users_count()
-    await m.reply_text(text=f"Total users - <code>`{users}</code></b>")
+    await m.reply_text(text=f"<b>🤖 ᴛᴏᴛᴀʟ ᴜꜱᴇʀ - `{users}</b>")
 
 @Bot.on_message(filters.private & filters.command("clear_batch"))
 async def clear_user_batch(bot: Client, m: Message):
