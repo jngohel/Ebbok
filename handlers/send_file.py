@@ -8,6 +8,7 @@ from pyrogram.types import Message
 from pyrogram.errors import FloodWait
 from handlers.helpers import str_to_b64
 from handlers.database import db
+import traceback
 
 def s2time(time):
     hr = time//3600
@@ -103,6 +104,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     return await media_forward(bot, user_id, file_id)
                 except Exception as e:
                     print(f"File send error: {e}")
+                    print(traceback.format_exc())
             else:
                 return await bot.forward_messages(
                     chat_id=user_id,
