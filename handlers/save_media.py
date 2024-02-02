@@ -50,32 +50,23 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         file_er_id = str(forwarded_msg.id)
         user_id = message.from_user.id
         user = await db.get_user(user_id)
-        direct_file = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
-        share_link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
-        short_link = await db.get_shortlink(user, share_link)
+        link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
+        short_link = await db.get_shortlink(user, link)
         share_link = f"https://telegram.me/share/url?url={short_link}"
         caption = user.get('caption')
         default_caption = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
         msg = caption.format(short_link=short_link, file_name=file_name, file_size=get_size(file_size), duration=duration) if caption else default_caption
-        pm_btn = [[
-            InlineKeyboardButton("ᴅɪʀᴇᴄᴛ ꜰɪʟᴇ", url=direct_file),
-            InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
-        ]]
-        channel_btn = [[
+        btn=[[
             InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
         ]]
-        if user.get("channel_id"):
-            channel_id = user["channel_id"]
-            if message.chat.type == enums.ChatType.PRIVATE:
-                reply_markup = InlineKeyboardMarkup(pm_btn)
-            else:
-                reply_markup = InlineKeyboardMarkup(channel_btn)
+        reply_markup = InlineKeyboardMarkup(btn)
         edited_thumb = await editable.edit_caption(
             caption=msg,
             reply_markup=reply_markup
         )
         if user.get("channel_id"):
+            channel_id = user["channel_id"] 
             await edited_thumb.copy(channel_id)
     except FloodWait as sl:
         if sl.value > 45:
@@ -96,13 +87,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
             sent_message = await forward_to_channel(bot, message, editable)
             if sent_message is None:
                 continue
-            message_ids_str += f"{str(sent_message.id)} "
-            await asyncio.sleep(2)
-            await editable.edit_caption(
-                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
-                parse_mode=enums.ParseMode.HTML
-            )
-            await asyncio.sleep(5)
+            message_ids_str += f"{str(sent_message.id)}"
         msg = await bot.send_message(
             chat_id=DB_CHANNEL,
             text=message_ids_str,
@@ -118,9 +103,9 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
-        caption = f"<b>Batch Files Stored in Database!\n\n{short_link}\n\n</b>"
+        msg = f"<b>Batch Files Stored in Database!\n\n{short_link}\n\n</b>"
         await editable.edit_caption(
-            caption=caption,
+            caption=msg,
             parse_mode=enums.ParseMode.HTML,
             reply_markup=reply_markup
         )
