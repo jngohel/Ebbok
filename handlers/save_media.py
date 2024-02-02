@@ -119,8 +119,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
         ]]
         reply_markup=InlineKeyboardMarkup(btn)       
         await editable.edit_caption(
-            caption=f"<b>Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files\n\n{short_link}\n\nJust Click the link to get your files!",
-            parse_mode=enums.ParseMode.MARKDOWN,
+            caption=f"<b>Batch Files Stored in my Database!\n\nHere is the Permanent Link of your files\n\n{short_link}\n\nJust Click the link to get your files!</b>",
             reply_markup=reply_markup
         )
     except Exception as err:
