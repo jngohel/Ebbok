@@ -294,7 +294,7 @@ async def button(bot: Client, cmd: CallbackQuery):
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
         await cmd.message.edit("<b>File Saved in Batch!\n\nPress below button to get batch link.</b>",
-                               reply_markup=reply_markup
+                               reply_markup=reply_markup)
 
     elif "genrate_batch" in cb_data:
         message_ids = MediaList.get(f"{str(cmd.from_user.id)}", None)
