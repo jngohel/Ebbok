@@ -98,7 +98,7 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
                 continue
             message_ids_str += f"{str(sent_message.id)} "
             await asyncio.sleep(2)
-            msg = await editable.edit_caption(
+            await editable.edit_caption(
                 caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
                 parse_mode=enums.ParseMode.HTML
             )
@@ -106,30 +106,22 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
         msg = await bot.send_message(
             chat_id=DB_CHANNEL,
             text=message_ids_str,
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Delete Batch", callback_data="close_data")
-                    ]
-                ]
-            )
+            disable_web_page_preview=True
         )
         user_id = message.from_user.id
         user = await db.get_user(user_id)
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(str(msg.id))}"
         short_link = await db.get_shortlink(user, share_link)
+        #share_link = f"https://telegram.me/share/url?url={short_link}"
+        btn = [[
+            InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
+            InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
+        ]]
+        reply_markup=InlineKeyboardMarkup(btn)       
         await editable.edit_caption(
-            caption=f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: <code>{short_link}</code> \n\nJust Click the link to get your files!",
+            caption=f"<b>Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files\n\n{short_link}\n\nJust Click the link to get your files!",
             parse_mode=enums.ParseMode.MARKDOWN,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Original Link", url=share_link),
-                        InlineKeyboardButton("Short Link", url=short_link)
-                    ]
-                ]
-            )
+            reply_markup=reply_markup
         )
     except Exception as err:
         print(err)
