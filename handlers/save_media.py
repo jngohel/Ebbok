@@ -117,9 +117,10 @@ async def save_batch_media_in_channel(bot: Client, editable: Message, message_id
             InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
         ]]
-        reply_markup=InlineKeyboardMarkup(btn)       
+        reply_markup=InlineKeyboardMarkup(btn)
+        caption = f"<b>Batch Files Stored in Database!\n\n{short_link}\n\n</b>"
         await editable.edit_caption(
-            caption=f"<b>Batch Files Stored in my Database!\n\nHere is the Permanent Link of your files\n\n{short_link}\n\nJust Click the link to get your files!</b>",
+            caption=caption,
             parse_mode=enums.ParseMode.HTML,
             reply_markup=reply_markup
         )
