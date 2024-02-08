@@ -1,6 +1,6 @@
 import datetime
 from info import BOT_USERNAME, DATABASE_URL, LOG_CHANNEL
-from handlers.database import Database
+from AKS.database import Database
 
 db = Database(DATABASE_URL, BOT_USERNAME)
 
