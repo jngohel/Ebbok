@@ -118,6 +118,8 @@ async def save_batch_onChannel(bot: Client, message: Message, edit_txt: Message,
             caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
             parse_mode=enums.ParseMode.HTML
         )
+        userTemp = await db.get_user(edit_txt.reply_to_message.from_user.id)
+        targetChannel = userTemp.get("channel_id")
         fileCount = int(linksList[1]) - int(linksList[0])
         i = 1
         while (i<fileCount):
@@ -161,6 +163,8 @@ async def save_batch_onChannel(bot: Client, message: Message, edit_txt: Message,
                 ]
             )
         )
+        if userTemp and targetChannel:
+            await edit_txt.copy(chat_id=int(targetChannel))
         await bot.send_message(
             chat_id=int(LOG_CHANNEL),
             text=f"#BATCH_SAVE:\n\n[{edit_txt.reply_to_message.from_user.first_name}](tg://user?id={edit_txt.reply_to_message.from_user.id}) Got Batch Link!",
