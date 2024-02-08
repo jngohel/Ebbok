@@ -15,19 +15,11 @@ async def forward_to_channel(bot: Client, message: Message, editable: Message):
     except FloodWait as sl:
         if sl.value > 45:
             await asyncio.sleep(sl.value)
-            await bot.send_message(
-                chat_id=int(LOG_CHANNEL),
-                text=f"#FloodWait:\nGot FloodWait of `{str(sl.value)}s` from `{str(editable.chat.id)}` !!",
-                disable_web_page_preview=True
-            )
         return await forward_to_channel(bot, message, editable)
 
 async def save_media_in_channel(bot: Client, editable: Message, message: Message):
     try:
-        msg = await editable.edit_caption(
-            caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
-            parse_mode=enums.ParseMode.HTML
-        )
+        msg = await editable.edit_caption(caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>", parse_mode=enums.ParseMode.HTML)
         await asyncio.sleep(5)
         forwarded_msg = await message.forward(DB_CHANNEL)
         getFile = await bot.get_messages(DB_CHANNEL, forwarded_msg.id)
