@@ -1,5 +1,5 @@
 import asyncio
-from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME
+from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME, BATCH_CHANNEL
 from pyrogram import Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
@@ -80,38 +80,51 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             parse_mode=enums.ParseMode.MARKDOWN
         )
 
-async def save_batch_media_in_channel(bot: Client, editable: Message, message_ids: list):
+async def save_batch_onChannel(bot: Client, message: Message, edit_txt: Message, linksList: list):
     try:
-        message_ids_str = ""
-        for message in (await bot.get_messages(chat_id=editable.chat.id, message_ids=message_ids)):
-            sent_message = await forward_to_channel(bot, message, editable)
-            if sent_message is None:
+        await edit_txt.edit_caption(caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>", parse_mode=enums.ParseMode.HTML)
+        userTemp = await db.get_user(edit_txt.reply_to_message.from_user.id)
+        targetChannel = userTemp.get("channel_id")
+        fileCount = int(linksList[1]) - int(linksList[0])
+        i = 1
+        while (i<fileCount):
+            linksList += [(int(linksList[0])+i)]
+            i+=1
+        linksList.sort()
+        msg_ids = ""
+        for msg in (await bot.get_messages(chat_id=int(BATCH_CHANNEL), message_ids=linksList)):
+            if msg is None:
                 continue
-            message_ids_str += f"{str(sent_message.id)}"
+            to_DB = await msg.forward(DB_CHANNEL)
+            if to_DB is not None:
+                msg_ids += f"{to_DB.id} "
+            else:
+                continue
         msg = await bot.send_message(
             chat_id=DB_CHANNEL,
-            text=message_ids_str,
+            text=msg_ids,
             disable_web_page_preview=True
         )
         user_id = message.from_user.id
         user = await db.get_user(user_id)
-        share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(str(msg.id))}"
-        short_link = await db.get_shortlink(user, share_link)
-        #share_link = f"https://telegram.me/share/url?url={short_link}"
+        link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(str(msg.id))}"
+        short_link = await db.get_shortlink(user, link)
+        share_link = f"https://telegram.me/share/url?url={short_link}"
         btn = [[
             InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
-        msg = f"<b>Batch Files Stored in Database!\n\n{short_link}\n\n</b>"
-        await editable.edit_caption(
-            caption=msg,
-            parse_mode=enums.ParseMode.HTML,
+        copyNeeded = await edit_txt.edit_caption(
+            caption=f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: `{short_link}` \n\nJust Click the link to get your files!",
+            parse_mode=enums.ParseMode.MARKDOWN,
             reply_markup=reply_markup
         )
+        if userTemp and targetChannel:
+            await copyNeeded.copy(chat_id=int(targetChannel))
     except Exception as err:
         print(err)
-        await editable.edit_caption(
+        await edit_txt.edit_caption(
             caption=f"Something Went Wrong!\n\n**Error:** `{err}`",
             parse_mode=enums.ParseMode.MARKDOWN
         )
