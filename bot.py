@@ -7,23 +7,23 @@ from pyrogram import Client, enums, filters
 from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
 from info import DB_CHANNEL, AUTH_CHANNEL, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, ADMINS, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API, BATCH_CHANNEL
-from handlers.database import db
-from handlers.add_user_to_db import add_user_to_database
-from handlers.send_file import send_media_and_reply, reply_forward, delete_after_delay
-from handlers.helpers import b64_to_str, str_to_b64
-from handlers.check_user_status import handle_user_status
-from handlers.force_sub_handler import handle_force_sub, get_invite_link
-from handlers.broadcast_handlers import main_broadcast_handler
-from handlers.save_media import save_media_in_channel, save_batch_onChannel
+from AKS.database import db
+from AKS.add_user_to_db import add_user_to_database
+from AKS.send_file import send_media_and_reply, reply_forward, delete_after_delay
+from AKS.helpers import b64_to_str, str_to_b64
+from AKS.check_user_status import handle_user_status
+from AKS.force_sub_handler import handle_force_sub, get_invite_link
+from AKS.broadcast_handlers import main_broadcast_handler
+from AKS.save_media import save_media_in_channel, save_batch_onChannel
 
 MediaList = {}
 
 Bot = Client(
     name=BOT_USERNAME,
-    in_memory=True,
-    bot_token=BOT_TOKEN,
     api_id=API_ID,
-    api_hash=API_HASH
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN,
+    in_memory=True
 )
 
 @Bot.on_message(filters.private)
