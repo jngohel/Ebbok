@@ -14,7 +14,7 @@ from handlers.helpers import b64_to_str, str_to_b64
 from handlers.check_user_status import handle_user_status
 from handlers.force_sub_handler import handle_force_sub, get_invite_link
 from handlers.broadcast_handlers import main_broadcast_handler
-from handlers.save_media import save_media_in_channel, save_batch_media_in_channel, save_batch_onChannel
+from handlers.save_media import save_media_in_channel, save_batch_onChannel
 
 MediaList = {}
 
@@ -364,7 +364,7 @@ async def addBatch(bot: Client, message: Message):
         link2 = int(((cmd_txt.split(" ", 3)[2]).split("t.me/c/", 2)[1]).split('/', 2)[1])
         linksList = [link1, link2]
     except IndexError:
-        return await message.reply_text(text="Use proper format when using the command !\n\nFor example:\n```/batch firstmsgLink lastmsgLink```", quote=True)
+        return await message.reply_text(text="Use proper format when using the command !\n\nFor example:\n<code>/batch firstmsgLink lastmsgLink</code>", quote=True)
     else:
         temp_msg1 = await bot.get_messages(chat_id=BATCH_CHANNEL, message_ids=link1)
         if temp_msg1.document and temp_msg1.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
@@ -476,18 +476,6 @@ async def button(bot: Client, cmd: CallbackQuery):
             await cmd.answer("User Banned from Updates Channel!", show_alert=True)
         except Exception as e:
             await cmd.answer(f"Can't Ban Him!\n\nError: {e}", show_alert=True)
-
-    elif "genratebatchlink" in cb_data:
-        if MediaList.get(f"{str(cmd.from_user.id)}", None) is None:
-            MediaList[f"{str(cmd.from_user.id)}"] = []
-        file_id = cmd.message.reply_to_message.id
-        MediaList[f"{str(cmd.from_user.id)}"].append(file_id)
-        message_ids = MediaList.get(f"{str(cmd.from_user.id)}", None)
-        if message_ids is None:
-            await cmd.answer("Batch List Empty!", show_alert=True)
-            return
-        await save_batch_media_in_channel(bot=bot, editable=cmd.message, message_ids=message_ids)
-        MediaList[f"{str(cmd.from_user.id)}"] = []
 
     elif "sharable_mode" in cb_data:
         await save_media_in_channel(bot, editable=cmd.message, message=cmd.message.reply_to_message)
