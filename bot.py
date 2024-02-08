@@ -14,7 +14,7 @@ from AKS.helpers import b64_to_str, str_to_b64, get_readable_time
 from AKS.check_user_status import handle_user_status
 from AKS.force_sub_handler import handle_force_sub, get_invite_link
 from AKS.broadcast_handlers import main_broadcast_handler
-from AKS.save_media import save_media_in_channel, save_batch_onChannel
+from AKS.save_media import save_media_in_channel, save_batch_in_channel
 
 MediaList = {}
 
@@ -109,7 +109,7 @@ async def addBatch(bot: Client, message: Message):
                 parse_mode=enums.ParseMode.HTML
             )
             os.remove(thumb_jpg)
-        await save_batch_onChannel(bot, message, reply_msg, linksList)
+        await save_batch_in_channel(bot, message, reply_msg, linksList)
 
 @Bot.on_message(filters.command("set_caption") & filters.private)
 async def set_caption(client, message):
