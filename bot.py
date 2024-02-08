@@ -211,7 +211,7 @@ async def main(bot: Client, message: Message):
         if thumb is None:
             editTXT = await message.reply_photo(
                 photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
-                caption="<b>Please Wait...</b>",
+                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
                 quote=True,
                 parse_mode=enums.ParseMode.HTML
             )
@@ -220,7 +220,7 @@ async def main(bot: Client, message: Message):
             thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
             editTXT = await message.reply_photo(
                 photo=thumb_jpg,
-                caption="<b>Please Wait...</b>",
+                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
                 quote=True,
                 parse_mode=enums.ParseMode.HTML
             )
