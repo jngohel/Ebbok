@@ -1,5 +1,5 @@
 from info import LOG_CHANNEL, BOT_USERNAME
-from handlers.database import db
+from AKS.database import db
 from pyrogram import Client
 from pyrogram.types import Message
 
