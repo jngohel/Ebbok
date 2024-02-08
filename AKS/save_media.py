@@ -18,7 +18,7 @@ async def forward_to_channel(bot: Client, message: Message, editable: Message):
 
 async def save_media_in_channel(bot: Client, editable: Message, message: Message):
     try:
-        msg = await editable.edit_caption(caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>", parse_mode=enums.ParseMode.HTML)
+        msg = await edit_text.edit_caption(caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>", parse_mode=enums.ParseMode.HTML)
         await asyncio.sleep(5)
         forwarded_msg = await message.forward(DB_CHANNEL)
         getFile = await bot.get_messages(DB_CHANNEL, forwarded_msg.id)
@@ -46,7 +46,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         share_link = f"https://telegram.me/share/url?url={short_link}"
         caption = user.get('caption')
         default_caption = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
-        msg = caption.format(short_link=short_link, file_name=file_name, file_size=get_size(file_size), duration=cal(duration)) if caption else default_caption
+        msg = caption.format(short_link=short_link, file_name=file_name, file_size=get_size(file_size), duration=calc(duration)) if caption else default_caption
         btn=[[
             InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
