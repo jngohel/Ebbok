@@ -151,7 +151,7 @@ async def save_batch_onChannel(bot: Client, message: Message, edit_txt: Message,
         user = await db.get_user(user_id)
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(str(msg.id))}"
         short_link = await db.get_shortlink(user, share_link)
-        await edit_txt.edit_caption(
+        copyNeeded = await edit_txt.edit_caption(
             caption=f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: `{short_link}` \n\nJust Click the link to get your files!",
             parse_mode=enums.ParseMode.MARKDOWN,
             reply_markup=InlineKeyboardMarkup(
@@ -164,7 +164,7 @@ async def save_batch_onChannel(bot: Client, message: Message, edit_txt: Message,
             )
         )
         if userTemp and targetChannel:
-            await edit_txt.copy(chat_id=int(targetChannel))
+            await copyNeeded.copy(chat_id=int(targetChannel))
         await bot.send_message(
             chat_id=int(LOG_CHANNEL),
             text=f"#BATCH_SAVE:\n\n[{edit_txt.reply_to_message.from_user.first_name}](tg://user?id={edit_txt.reply_to_message.from_user.id}) Got Batch Link!",
