@@ -97,7 +97,7 @@ async def addBatch(bot: Client, message: Message):
         if thumb is None:
             reply_msg = await message.reply_photo(
                 photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
-                caption="Please Wait...", 
+                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>", 
                 quote=True
             )
         else:
