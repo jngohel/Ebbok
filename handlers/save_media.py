@@ -1,12 +1,12 @@
 import asyncio
+import traceback
 from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME, BATCH_CHANNEL
 from pyrogram import Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
-from handlers.helpers import str_to_b64
-from handlers.send_file import get_size, s2time
-import traceback
-from handlers.database import db
+from AKS.helpers import str_to_b64
+from AKS.send_file import get_size, s2time
+from AKS.database import db
     
 async def forward_to_channel(bot: Client, message: Message, editable: Message):
     try:
