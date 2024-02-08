@@ -71,7 +71,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             parse_mode=enums.ParseMode.MARKDOWN
         )
 
-async def save_batch_onChannel(bot: Client, message: Message, edit_txt: Message, linksList: list):
+async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message, linksList: list):
     try:
         await edit_txt.edit_caption(caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>", parse_mode=enums.ParseMode.HTML)
         userTemp = await db.get_user(edit_txt.reply_to_message.from_user.id)
