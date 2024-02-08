@@ -4,8 +4,7 @@ from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME, BATCH_CHANNEL
 from pyrogram import Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
-from AKS.helpers import str_to_b64
-from AKS.send_file import get_size, s2time
+from AKS.helpers import str_to_b64, calc, get_size
 from AKS.database import db
     
 async def forward_to_channel(bot: Client, message: Message, editable: Message):
