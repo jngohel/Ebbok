@@ -10,6 +10,8 @@ from handlers.helpers import str_to_b64
 from handlers.database import db
 import traceback
 
+DLT_SCHEDULE = {}
+
 def s2time(time):
     hr = time//3600
     mint = (time-(hr*3600))//60
@@ -25,16 +27,16 @@ def get_size(size):
         size /= 1024.0
     return "%.2f %s" % (size, units[i])
 
-async def reply_forward(message: Message, file_id: int):
+async def reply_forward(bot: Client, userID: int | str):
     try:
-        await message.reply_text(
-            f"Files will be deleted in 30 minutes to avoid copyright issues. Please forward and save them.",
-            disable_web_page_preview=True,
-            quote=True
+        await bot.send_message(
+            chat_id=int(userID),
+            text=f"Files will be deleted in 30 minutes to avoid copyright issues. Please forward and save them.",
+            disable_web_page_preview=True
         )
     except FloodWait as e:
         await asyncio.sleep(e.x)
-        await reply_forward(message, file_id)
+        await reply_forward(bot, userID)
 
 async def media_forward(bot: Client, user_id: int, file_id: int):
     try:
@@ -110,11 +112,25 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
     except Exception as e:
         print(f"Error in media_forward: {e}")
 
-async def send_media_and_reply(bot: Client, user_id: int, file_id: int):
+async def send_media_and_reply(bot: Client, user_id: int, file_id: int, uniqStr: str):
     sent_message = await media_forward(bot, user_id, file_id)
-    await reply_forward(message=sent_message, file_id=file_id)
-    asyncio.create_task(delete_after_delay(sent_message, 1800))
+    dlt_list = DLT_SCHEDULE.get(uniqStr)
+    if not dlt_list:
+        DLT_SCHEDULE[uniqStr] = [sent_message]
+    else:
+        dlt_list.append(sent_message)
+        DLT_SCHEDULE[uniqStr] = dlt_list
 
-async def delete_after_delay(message, delay):
+async def delete_after_delay(uniqStr, delay):
     await asyncio.sleep(delay)
-    await message.delete()
+    dlt_list = DLT_SCHEDULE.get(uniqStr)
+    if not dlt_list:
+        return
+    else:
+        for msg in dlt_list:
+            try:
+                await msg.delete()
+            except FloodWait as e:
+                await asyncio.sleep(e.value)
+                await msg.delete()
+        DLT_SCHEDULE[uniqStr] = []
