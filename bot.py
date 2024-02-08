@@ -6,15 +6,15 @@ from Script import script
 from pyrogram import Client, enums, filters
 from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
-from info import DB_CHANNEL, AUTH_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API
+from info import DB_CHANNEL, AUTH_CHANNEL, BANNED_USERS, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, BOT_OWNER, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API, BATCH_CHANNEL
 from handlers.database import db
 from handlers.add_user_to_db import add_user_to_database
-from handlers.send_file import send_media_and_reply
+from handlers.send_file import send_media_and_reply, reply_forward, delete_after_delay
 from handlers.helpers import b64_to_str, str_to_b64
 from handlers.check_user_status import handle_user_status
 from handlers.force_sub_handler import handle_force_sub, get_invite_link
 from handlers.broadcast_handlers import main_broadcast_handler
-from handlers.save_media import save_media_in_channel, save_batch_media_in_channel
+from handlers.save_media import save_media_in_channel, save_batch_media_in_channel, save_batch_onChannel
 
 MediaList = {}
 
@@ -151,7 +151,9 @@ async def start(bot: Client, cmd: Message):
             else:
                 message_ids.append(int(GetMessage.id))
             for i in range(len(message_ids)):
-                await send_media_and_reply(bot, user_id=cmd.from_user.id, file_id=int(message_ids[i]))
+                await send_media_and_reply(bot, user_id=cmd.from_user.id, file_id=int(message_ids[i]), uniqStr=(usr_cmd.split("_")[-1]))
+            await reply_forward(bot, cmd.from_user.id)
+            await delete_after_delay(uniqStr=(usr_cmd.split("_")[-1]), delay=1800)
         except Exception as e:
             print(e)
 
@@ -173,8 +175,6 @@ async def main(bot: Client, message: Message):
             return
 
         btn = [[
-            InlineKeyboardButton("ʙᴀᴛᴄʜ ʟɪɴᴋ", callback_data="genratebatchlink")
-        ],[
             InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", callback_data="sharable_mode")
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
@@ -355,6 +355,42 @@ async def _banned_users(_, m: Message):
         os.remove('banned-users.txt')
         return
     await m.reply_text(reply_text, True)
+
+@Bot.on_message(filters.command("batch") & filters.private)
+async def addBatch(bot: Client, message: Message):
+    cmd_txt = message.text
+    try:
+        link1 = int(((cmd_txt.split(" ", 3)[1]).split("t.me/c/", 2)[1]).split('/', 2)[1])
+        link2 = int(((cmd_txt.split(" ", 3)[2]).split("t.me/c/", 2)[1]).split('/', 2)[1])
+        linksList = [link1, link2]
+    except IndexError:
+        return await message.reply_text(text="Use proper format when using the command !\n\nFor example:\n```/batch firstmsgLink lastmsgLink```", quote=True)
+    else:
+        temp_msg1 = await bot.get_messages(chat_id=BATCH_CHANNEL, message_ids=link1)
+        if temp_msg1.document and temp_msg1.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
+            thumb = temp_msg1.document.thumbs[0] #fetch thumb
+        elif temp_msg1.video and temp_msg1.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
+            thumb = temp_msg1.video.thumbs[0] #fetch thumb
+        elif temp_msg1.audio and temp_msg1.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
+            thumb = temp_msg1.audio.thumbs[0] #fetch thumb
+        else:
+            thumb = None #if file_type is not in ['document', 'video', 'audio']: assign None to thumb var
+        if thumb is None:
+            reply_msg = await message.reply_photo(
+                photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
+                caption="Please Wait...", 
+                quote=True
+            )
+        else:
+            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
+            reply_msg = await message.reply_photo(
+                photo=thumb_jpg,
+                caption="Please Wait...",
+                quote=True,
+                parse_mode=enums.ParseMode.HTML
+            )
+            os.remove(thumb_jpg) #remove thumb from current working dir
+        await save_batch_onChannel(bot, message, reply_msg, linksList)
 
 @Bot.on_message(filters.private & filters.command("clear_batch"))
 async def clear_user_batch(bot: Client, m: Message):
