@@ -6,11 +6,11 @@ from Script import script
 from pyrogram import Client, enums, filters
 from pyrogram.errors import UserNotParticipant, FloodWait, QueryIdInvalid
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
-from info import DB_CHANNEL, AUTH_CHANNEL, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, ADMINS, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API, BATCH_CHANNEL
+from info import DB_CHANNEL, AUTH_CHANNEL, API_HASH, API_ID, BOT_USERNAME, BOT_TOKEN, LOG_CHANNEL, OTHER_USERS_CAN_SAVE_FILE, ADMINS, BANNED_CHAT_IDS, SUPPORT_GROUP_LINK, UPDATES_CHANNEL_LINK, SHORTENER_WEBSITE, SHORTENER_API, BATCH_CHANNEL, DELETE_TIME
 from AKS.database import db
 from AKS.add_user_to_db import add_user_to_database
 from AKS.send_file import send_media_and_reply, reply_forward, delete_after_delay
-from AKS.helpers import b64_to_str, str_to_b64
+from AKS.helpers import b64_to_str, str_to_b64, get_readable_time
 from AKS.check_user_status import handle_user_status
 from AKS.force_sub_handler import handle_force_sub, get_invite_link
 from AKS.broadcast_handlers import main_broadcast_handler
@@ -62,7 +62,7 @@ async def start(bot: Client, cmd: Message):
             if GetMessage.text:
                 message_ids = GetMessage.text.split(" ")
                 _response_msg = await cmd.reply_text(
-                    text=f"**Total Files:** `{len(message_ids)}`",
+                    text=f"<b>📝 ᴛᴏᴛᴀʟ ꜰɪʟᴇꜱ - <code>{len(message_ids)}</code></b>",
                     quote=True,
                     disable_web_page_preview=True
                 )
@@ -71,7 +71,7 @@ async def start(bot: Client, cmd: Message):
             for i in range(len(message_ids)):
                 await send_media_and_reply(bot, user_id=cmd.from_user.id, file_id=int(message_ids[i]), uniqStr=(usr_cmd.split("_")[-1]))
             await reply_forward(bot, cmd.from_user.id)
-            await delete_after_delay(uniqStr=(usr_cmd.split("_")[-1]), delay=1800)
+            await delete_after_delay(uniqStr=(usr_cmd.split("_")[-1]), delay=<code>{get_readable_time(DELETE_TIME)}</code>)
         except Exception as e:
             print(e)
 
@@ -86,14 +86,14 @@ async def addBatch(bot: Client, message: Message):
         return await message.reply_text(text="Use proper format when using the command !\n\nFor example:\n```/batch firstmsgLink lastmsgLink```", quote=True)
     else:
         temp_msg1 = await bot.get_messages(chat_id=BATCH_CHANNEL, message_ids=link1)
-        if temp_msg1.document and temp_msg1.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
+        if temp_msg1.document and temp_msg1.document.thumbs[0]:
             thumb = temp_msg1.document.thumbs[0] #fetch thumb
-        elif temp_msg1.video and temp_msg1.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
+        elif temp_msg1.video and temp_msg1.video.thumbs[0]:
             thumb = temp_msg1.video.thumbs[0] #fetch thumb
-        elif temp_msg1.audio and temp_msg1.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
+        elif temp_msg1.audio and temp_msg1.audio.thumbs[0]:
             thumb = temp_msg1.audio.thumbs[0] #fetch thumb
         else:
-            thumb = None #if file_type is not in ['document', 'video', 'audio']: assign None to thumb var
+            thumb = None
         if thumb is None:
             reply_msg = await message.reply_photo(
                 photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
@@ -101,14 +101,14 @@ async def addBatch(bot: Client, message: Message):
                 quote=True
             )
         else:
-            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
+            thumb_jpg = await bot.download_media(thumb)
             reply_msg = await message.reply_photo(
                 photo=thumb_jpg,
-                caption="Please Wait...",
+                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
                 quote=True,
                 parse_mode=enums.ParseMode.HTML
             )
-            os.remove(thumb_jpg) #remove thumb from current working dir
+            os.remove(thumb_jpg)
         await save_batch_onChannel(bot, message, reply_msg, linksList)
 
 @Bot.on_message(filters.command("set_caption") & filters.private)
