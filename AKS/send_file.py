@@ -12,7 +12,7 @@ from AKS.database import db
 
 DLT_SCHEDULE = {}
 
-def s2time(time):
+def calc(time):
     hr = time//3600
     mint = (time-(hr*3600))//60
     sec = (time-3600) - (60*((time-3600)//60))
@@ -62,17 +62,17 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                         file_name = file.document.file_name
                         file_size = file.document.file_size
                         file_id = file.document.file_id
-                        duration = s2time(file.document.duration) if hasattr(file.document, 'duration') else None
+                        duration = file.document.duration if hasattr(file.document, 'duration') else None
                     elif file and file.video:
                         file_name = file.video.file_name
                         file_size = file.video.file_size
                         file_id = file.video.file_id
-                        duration = s2time(file.video.duration) if hasattr(file.video, 'duration') else None
+                        duration = file.video.duration if hasattr(file.video, 'duration') else None
                     elif file and file.audio:
                         file_name = file.audio.file_name
                         file_size = file.audio.file_size
                         file_id = file.audio.file_id
-                        duration = s2time(file.audio.duration) if hasattr(file.audio, 'duration') else None
+                        duration = file.audio.duration if hasattr(file.audio, 'duration') else None
                     else:
                         return await bot.forward_messages(
                             chat_id=user_id,
@@ -84,7 +84,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     return
                 try:
                     file_er_id = str(file_id)
-                    share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
+                    share_link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
                     short_link = await db.get_shortlink(user, share_link)
 
                     return await bot.send_cached_media(
@@ -93,7 +93,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                         caption=user['caption'].format(
                             file_name=file_name,
                             file_size=get_size(file_size),
-                            duration=duration,
+                            duration=calc(duration),
                             short_link=short_link
                         )
                     )
