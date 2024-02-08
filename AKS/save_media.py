@@ -25,15 +25,15 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         if getFile and getFile.document:
             file_name = getFile.document.file_name
             file_size = getFile.document.file_size
-            duration = getFile.document.duration if hasattr(getFile.document, 'duration') else None
+            duration = calc(getFile.document.duration) if hasattr(getFile.document, 'duration') else None
         elif getFile and getFile.video:
             file_name = getFile.video.file_name
             file_size = getFile.video.file_size
-            duration = getFile.video.duration if hasattr(getFile.video, 'duration') else None
+            duration = calc(getFile.video.duration) if hasattr(getFile.video, 'duration') else None
         elif getFile and getFile.audio:
             file_name = getFile.audio.file_name
             file_size = getFile.audio.file_size
-            duration = getFile.audio.duration if hasattr(getFile.audio, 'duration') else None
+            duration = calc(getFile.audio.duration) if hasattr(getFile.audio, 'duration') else None
         else:
             file_name = 'None'
             file_size = 'None'
@@ -46,7 +46,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         share_link = f"https://telegram.me/share/url?url={short_link}"
         caption = user.get('caption')
         default_caption = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
-        msg = caption.format(short_link=short_link, file_name=file_name, file_size=get_size(file_size), duration=calc(duration)) if caption else default_caption
+        msg = caption.format(short_link=short_link, file_name=file_name, file_size=get_size(file_size), duration=duration) if caption else default_caption
         btn=[[
             InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
