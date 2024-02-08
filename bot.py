@@ -174,10 +174,6 @@ async def main(bot: Client, message: Message):
         if OTHER_USERS_CAN_SAVE_FILE is False:
             return
 
-        btn = [[
-            InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", callback_data="sharable_mode")
-        ]]
-        reply_markup=InlineKeyboardMarkup(btn)
         if message.document and message.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
             thumb = message.document.thumbs[0] #fetch thumb
         elif message.video and message.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
@@ -186,22 +182,24 @@ async def main(bot: Client, message: Message):
             thumb = message.audio.thumbs[0] #fetch thumb
         else:
             thumb = None #if file_type is not in ['document', 'video', 'audio']: assign None to thumb var
+        
         if thumb is None:
-            await message.reply_text(
-                text="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏꜱᴇ ʜᴇʀᴇ 👇</b>",
-                reply_markup=reply_markup,
-                quote=True,
-                disable_web_page_preview=True
-            )
-        else:
-            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
-            await message.reply_photo(
-                photo=thumb_jpg,
-                caption="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴᴛ, ᴄʜᴏᴏꜱᴇ ʜᴇʀᴇ 👇</b>",
-                reply_markup=reply_markup,
+            editTXT = await message.reply_photo(
+                photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
+                caption="<b>Please Wait...</b>",
                 quote=True,
                 parse_mode=enums.ParseMode.HTML
             )
+            await save_media_in_channel(bot, editTXT, message)
+        else:
+            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
+            editTXT = await message.reply_photo(
+                photo=thumb_jpg,
+                caption="<b>Please Wait...</b>",
+                quote=True,
+                parse_mode=enums.ParseMode.HTML
+            )
+            await save_media_in_channel(bot, editTXT, message)
             os.remove(thumb_jpg) #remove thumb from current working dir
     elif message.chat.type == enums.ChatType.CHANNEL:
         if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(AUTH_CHANNEL)) or message.forward_from_chat or message.forward_from:
@@ -476,9 +474,6 @@ async def button(bot: Client, cmd: CallbackQuery):
             await cmd.answer("User Banned from Updates Channel!", show_alert=True)
         except Exception as e:
             await cmd.answer(f"Can't Ban Him!\n\nError: {e}", show_alert=True)
-
-    elif "sharable_mode" in cb_data:
-        await save_media_in_channel(bot, editable=cmd.message, message=cmd.message.reply_to_message)
 
     elif "close_data" in cb_data:
         await cmd.message.delete(True)
