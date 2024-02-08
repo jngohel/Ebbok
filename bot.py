@@ -71,7 +71,7 @@ async def start(bot: Client, cmd: Message):
             for i in range(len(message_ids)):
                 await send_media_and_reply(bot, user_id=cmd.from_user.id, file_id=int(message_ids[i]), uniqStr=(usr_cmd.split("_")[-1]))
             await reply_forward(bot, cmd.from_user.id)
-            await delete_after_delay(uniqStr=(usr_cmd.split("_")[-1]), delay=<code>{get_readable_time(DELETE_TIME)}</code>))
+            await delete_after_delay(uniqStr=(usr_cmd.split("_")[-1]), delay=DELETE_TIME)
         except Exception as e:
             print(e)
 
