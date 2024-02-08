@@ -237,8 +237,8 @@ async def main(bot: Client, message: Message):
         try:
             forwarded_msg = await message.forward(DB_CHANNEL)
             file_er_id = str(forwarded_msg.id)
-            share_link = f"https://t.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
-            CH_edit = await bot.edit_message_reply_markup(
+            share_link = f"https://t.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
+            await bot.edit_message_reply_markup(
                 message.chat.id, 
                 message.id,
                 reply_markup=InlineKeyboardMarkup(
@@ -251,18 +251,6 @@ async def main(bot: Client, message: Message):
             )
         except FloodWait as sl:
             await asyncio.sleep(sl.value)
-            await bot.send_message(
-                chat_id=int(LOG_CHANNEL),
-                text=f"#FloodWait:\nGot FloodWait of `{str(sl.value)}s` from `{str(message.chat.id)}` !!",
-                disable_web_page_preview=True
-            )
-        except Exception as err:
-            await bot.leave_chat(message.chat.id)
-            await bot.send_message(
-                chat_id=int(LOG_CHANNEL),
-                text=f"#ERROR_TRACEBACK:\nGot Error from `{str(message.chat.id)}` !!\n\n**Traceback:** `{err}`",
-                disable_web_page_preview=True
-            )
 
 @Bot.on_message(filters.private & filters.command("broadcast") & filters.user(ADMINS) & filters.reply)
 async def broadcast_handler_open(_, m: Message):
