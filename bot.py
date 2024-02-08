@@ -200,18 +200,18 @@ async def main(bot: Client, message: Message):
                 return
         if OTHER_USERS_CAN_SAVE_FILE is False:
             return
-        if message.document and message.document.thumbs[0]:
-            thumb = message.document.thumbs[0]
-        elif message.video and message.video.thumbs[0]:
-            thumb = message.video.thumbs[0]
-        elif message.audio and message.audio.thumbs[0]:
-            thumb = message.audio.thumbs[0]
+        if message.document and message.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
+            thumb = message.document.thumbs[0] #fetch thumb
+        elif message.video and message.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
+            thumb = message.video.thumbs[0] #fetch thumb
+        elif message.audio and message.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
+            thumb = message.audio.thumbs[0] #fetch thumb
         else:
-            thumb = None
+            thumb = None #if file_type is not in ['document', 'video', 'audio']: assign None to thumb var       
         if thumb is None:
             editTXT = await message.reply_photo(
                 photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
-                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
+                caption="<b>Please Wait...</b>",
                 quote=True,
                 parse_mode=enums.ParseMode.HTML
             )
@@ -220,12 +220,12 @@ async def main(bot: Client, message: Message):
             thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
             editTXT = await message.reply_photo(
                 photo=thumb_jpg,
-                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
+                caption="<b>Please Wait...</b>",
                 quote=True,
                 parse_mode=enums.ParseMode.HTML
             )
             await save_media_in_channel(bot, editTXT, message)
-            os.remove(thumb_jpg)
+            os.remove(thumb_jpg) #remove thumb from current working dir
     elif message.chat.type == enums.ChatType.CHANNEL:
         if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(AUTH_CHANNEL)) or message.forward_from_chat or message.forward_from:
             return
@@ -233,7 +233,43 @@ async def main(bot: Client, message: Message):
             await bot.leave_chat(message.chat.id)
             return
         else:
-            pass        
+            pass
+        try:
+            forwarded_msg = await message.forward(DB_CHANNEL)
+            file_er_id = str(forwarded_msg.id)
+            share_link = f"https://t.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
+            CH_edit = await bot.edit_message_reply_markup(
+                message.chat.id, 
+                message.id,
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", url=share_link)
+                        ]
+                    ]
+                )
+            )
+            if message.chat.username:
+                await forwarded_msg.reply_text(
+                    f"#CHANNEL_BUTTON:\n\n[{message.chat.title}](https://t.me/{message.chat.username}/{CH_edit.id}) Channel's Broadcasted File's Button Added!")
+            else:
+                private_ch = str(message.chat.id)[4:]
+                await forwarded_msg.reply_text(
+                    f"#CHANNEL_BUTTON:\n\n[{message.chat.title}](https://t.me/c/{private_ch}/{CH_edit.id}) Channel's Broadcasted File's Button Added!")
+        except FloodWait as sl:
+            await asyncio.sleep(sl.value)
+            await bot.send_message(
+                chat_id=int(LOG_CHANNEL),
+                text=f"#FloodWait:\nGot FloodWait of `{str(sl.value)}s` from `{str(message.chat.id)}` !!",
+                disable_web_page_preview=True
+            )
+        except Exception as err:
+            await bot.leave_chat(message.chat.id)
+            await bot.send_message(
+                chat_id=int(LOG_CHANNEL),
+                text=f"#ERROR_TRACEBACK:\nGot Error from `{str(message.chat.id)}` !!\n\n**Traceback:** `{err}`",
+                disable_web_page_preview=True
+            )
 
 @Bot.on_message(filters.private & filters.command("broadcast") & filters.user(ADMINS) & filters.reply)
 async def broadcast_handler_open(_, m: Message):
