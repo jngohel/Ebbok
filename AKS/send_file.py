@@ -3,35 +3,20 @@ import traceback
 import requests
 import string
 import random
-from info import DB_CHANNEL, FORWARD_AS_COPY, BOT_USERNAME
+from info import DB_CHANNEL, FORWARD_AS_COPY, BOT_USERNAME, DELETE_TIME
 from pyrogram import Client
 from pyrogram.types import Message
 from pyrogram.errors import FloodWait
-from AKS.helpers import str_to_b64
+from AKS.helpers import str_to_b64, get_readable_time, calc, get_size
 from AKS.database import db
 
 DLT_SCHEDULE = {}
-
-def calc(time):
-    hr = time//3600
-    mint = (time-(hr*3600))//60
-    sec = (time-3600) - (60*((time-3600)//60))
-    return f"{hr}:{mint}:{sec}"
-
-def get_size(size):
-    units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
-    size = float(size)
-    i = 0
-    while size >= 1024.0 and i < len(units):
-        i += 1
-        size /= 1024.0
-    return "%.2f %s" % (size, units[i])
 
 async def reply_forward(bot: Client, userID: int | str):
     try:
         await bot.send_message(
             chat_id=int(userID),
-            text=f"Files will be deleted in 30 minutes to avoid copyright issues. Please forward and save them.",
+            text=f"Files will be deleted in <code>{get_readable_time(DELETE_TIME)}</code> to avoid copyright issues. Please forward and save them.",
             disable_web_page_preview=True
         )
     except FloodWait as e:
