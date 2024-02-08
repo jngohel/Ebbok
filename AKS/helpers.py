@@ -20,3 +20,18 @@ def get_readable_time(seconds):
             period_value, seconds = divmod(seconds, period_seconds)
             result += f'{int(period_value)}{period_name}'
     return result
+
+def calc(time):
+    hr = time//3600
+    mint = (time-(hr*3600))//60
+    sec = (time-3600) - (60*((time-3600)//60))
+    return f"{hr}:{mint}:{sec}"
+
+def get_size(size):
+    units = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
+    size = float(size)
+    i = 0
+    while size >= 1024.0 and i < len(units):
+        i += 1
+        size /= 1024.0
+    return "%.2f %s" % (size, units[i])
