@@ -18,8 +18,6 @@ async def forward_to_channel(bot: Client, message: Message, editable: Message):
 
 async def save_media_in_channel(bot: Client, editable: Message, message: Message):
     try:
-        msg = await editable.edit_caption(caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>", parse_mode=enums.ParseMode.HTML)
-        await asyncio.sleep(5)
         forwarded_msg = await message.forward(DB_CHANNEL)
         getFile = await bot.get_messages(DB_CHANNEL, forwarded_msg.id)
         if getFile and getFile.document:
