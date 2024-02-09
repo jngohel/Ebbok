@@ -162,7 +162,7 @@ async def set_caption(client, message):
     try:
         caption = (message.text).split(" ", 1)[1]
     except IndexError:
-        return await message.reply_text("<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴄᴀᴘᴛɪᴏɴ ᴀʟᴏɴɢ ᴡɪᴛʜ ɪᴛ.\n\nᴇxᴀᴍᴘʟᴇ -\n\nꜰᴏʀ ꜰɪʟᴇ ᴅᴜʀᴀᴛɪᴏɴ ꜱᴇɴᴅ <code>{duration}</code>\nꜰᴏʀ ꜰɪʟᴇ ɴᴀᴍᴇ ꜱᴇɴᴅ <code>{file_name}</code>\nꜰᴏʀ ꜰɪʟᴇ ꜱɪᴢᴇ ꜱᴇɴᴅ <code>{file_size}</code>\n\n<code>/set_caption {file_name}</code></b>")
+        return await message.reply_text("<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴄᴀᴘᴛɪᴏɴ ᴀʟᴏɴɢ ᴡɪᴛʜ ɪᴛ.\n\nᴇxᴀᴍᴘʟᴇ -\n\nꜰᴏʀ ꜰɪʟᴇ ᴅᴜʀᴀᴛɪᴏɴ <code>{duration}</code>\nꜰᴏʀ ꜰɪʟᴇ ɴᴀᴍᴇ <code>{file_name}</code>\nꜰᴏʀ ꜰɪʟᴇ ꜱɪᴢᴇ <code>{file_size}</code>\nꜰᴏʀ ꜱʜᴏʀᴛʟɪɴᴋ <code>{short_link}</code>\n\n<code>/set_caption {file_name}</code></b>")
     else:
         await db.custom_file_caption(user_id, caption)
         return await message.reply_text(f"<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ\n\n<code>{caption}</code></b>")
