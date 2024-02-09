@@ -1,6 +1,6 @@
 import asyncio
 import traceback
-from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME, BATCH_CHANNEL
+from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME, BATCH_CHANNEL, URL
 from pyrogram import Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
@@ -39,8 +39,9 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         file_er_id = str(forwarded_msg.id)
         user_id = message.from_user.id
         user = await db.get_user(user_id)
+        stream = f"{URL}watch/{forwarded_msg.id}"
         link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
-        short_link = await db.get_shortlink(user, link)
+        short_link = await db.get_shortlink(user, stream)
         share_link = f"https://telegram.me/share/url?url={short_link}"
         caption = user.get('caption')
         default_caption = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
