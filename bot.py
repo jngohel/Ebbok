@@ -75,6 +75,51 @@ async def start(bot: Client, cmd: Message):
         except Exception as e:
             print(e)
 
+@Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(DB_CHANNEL))
+async def main(bot: Client, message: Message):
+    if message.chat.type == enums.ChatType.PRIVATE:
+        await add_user_to_database(bot, message)
+        if AUTH_CHANNEL is not None:
+            back = await handle_force_sub(bot, message)
+            if back == 400:
+                return
+        if OTHER_USERS_CAN_SAVE_FILE is False:
+            return
+        if message.document and message.document.thumbs[0]:
+            thumb = message.document.thumbs[0]
+        elif message.video and message.video.thumbs[0]:
+            thumb = message.video.thumbs[0]
+        elif message.audio and message.audio.thumbs[0]:
+            thumb = message.audio.thumbs[0]
+        else:
+            thumb = None
+        if thumb is None:
+            editTXT = await message.reply_photo(
+                photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
+                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
+                quote=True,
+                parse_mode=enums.ParseMode.HTML
+            )
+            await save_media_in_channel(bot, editTXT, message)
+        else:
+            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
+            editTXT = await message.reply_photo(
+                photo=thumb_jpg,
+                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
+                quote=True,
+                parse_mode=enums.ParseMode.HTML
+            )
+            await save_media_in_channel(bot, editTXT, message)
+            os.remove(thumb_jpg)
+    elif message.chat.type == enums.ChatType.CHANNEL:
+        if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(AUTH_CHANNEL)) or message.forward_from_chat or message.forward_from:
+            return
+        elif int(message.chat.id) in BANNED_CHAT_IDS:
+            await bot.leave_chat(message.chat.id)
+            return
+        else:
+            pass        
+
 @Bot.on_message(filters.command("batch") & filters.private)
 async def addBatch(bot: Client, message: Message):
     cmd_txt = message.text
@@ -189,68 +234,6 @@ async def info(client, message):
 
 📝 ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user.get('caption')}`"""
         await message.reply_text(text, reply_markup=reply_markup)
-
-@Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(DB_CHANNEL))
-async def main(bot: Client, message: Message):
-    if message.chat.type == enums.ChatType.PRIVATE:
-        await add_user_to_database(bot, message)
-        if AUTH_CHANNEL is not None:
-            back = await handle_force_sub(bot, message)
-            if back == 400:
-                return
-        if OTHER_USERS_CAN_SAVE_FILE is False:
-            return
-        if message.document and message.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
-            thumb = message.document.thumbs[0] #fetch thumb
-        elif message.video and message.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
-            thumb = message.video.thumbs[0] #fetch thumb
-        elif message.audio and message.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
-            thumb = message.audio.thumbs[0] #fetch thumb
-        else:
-            thumb = None #if file_type is not in ['document', 'video', 'audio']: assign None to thumb var       
-        if thumb is None:
-            editTXT = await message.reply_photo(
-                photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
-                caption="<b>Please Wait...</b>",
-                quote=True,
-                parse_mode=enums.ParseMode.HTML
-            )
-            await save_media_in_channel(bot, editTXT, message)
-        else:
-            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
-            editTXT = await message.reply_photo(
-                photo=thumb_jpg,
-                caption="<b>Please Wait...</b>",
-                quote=True,
-                parse_mode=enums.ParseMode.HTML
-            )
-            await save_media_in_channel(bot, editTXT, message)
-            os.remove(thumb_jpg) #remove thumb from current working dir
-    elif message.chat.type == enums.ChatType.CHANNEL:
-        if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(AUTH_CHANNEL)) or message.forward_from_chat or message.forward_from:
-            return
-        elif int(message.chat.id) in BANNED_CHAT_IDS:
-            await bot.leave_chat(message.chat.id)
-            return
-        else:
-            pass
-        try:
-            forwarded_msg = await message.forward(DB_CHANNEL)
-            file_er_id = str(forwarded_msg.id)
-            share_link = f"https://t.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
-            await bot.edit_message_reply_markup(
-                message.chat.id, 
-                message.id,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton("ꜱʜᴀʀᴇᴀʙʟᴇ ʟɪɴᴋ", url=share_link)
-                        ]
-                    ]
-                )
-            )
-        except FloodWait as sl:
-            await asyncio.sleep(sl.value)
 
 @Bot.on_message(filters.private & filters.command("broadcast") & filters.user(ADMINS) & filters.reply)
 async def broadcast_handler_open(_, m: Message):
