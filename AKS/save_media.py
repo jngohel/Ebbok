@@ -46,9 +46,12 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         caption = user.get('caption')
         default_caption = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
         msg = caption.format(short_link=short_link, file_name=file_name, file_size=get_size(file_size), duration=duration) if caption else default_caption
+        #btn=[[
+            #InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
+            #InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
+        #]]
         btn=[[
-            InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
-            InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
+            InlineKeyboardButton("stream", url=stream)
         ]]
         reply_markup = InlineKeyboardMarkup(btn)
         edited_thumb = await editable.edit_caption(
