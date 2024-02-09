@@ -1,5 +1,6 @@
 from base64 import standard_b64encode, standard_b64decode
 from typing import Any
+from pyrogram.types import Message
 
 def str_to_b64(__str: str) -> str:
     str_bytes = __str.encode('ascii')
