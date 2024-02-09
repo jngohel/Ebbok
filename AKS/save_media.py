@@ -56,7 +56,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             reply_markup=reply_markup
         )
         user = await db.get_user(user_id)
-        if user.get("channel_id"):
+        if user.get("channel_id", []):
             ids = user.get("channel_id")
             for id in ids:
                 await edited_thumb.copy(id)
