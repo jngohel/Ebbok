@@ -17,6 +17,7 @@ BANNED_CHAT_IDS = list(set(int(x) for x in os.environ.get("BANNED_CHAT_IDS", "")
 OTHER_USERS_CAN_SAVE_FILE = bool(os.environ.get("OTHER_USERS_CAN_SAVE_FILE", True))
 BATCH_CHANNEL = int(os.environ.get("BATCH_CHANNEL", "-1002120917360"))
 DELETE_TIME = int(os.environ.get('DELETE_TIME', 1200))
+URL = os.environ.get('URL', 'aks-file-to-link-525cd78edc50.herokuapp.com')
 
 #this vars for start message button
 SUPPORT_GROUP_LINK = os.environ.get("SUPPORT_GROUP_LINK", "https://t.me/aks_bot_support")
