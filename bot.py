@@ -83,32 +83,32 @@ async def addBatch(bot: Client, message: Message):
         link2 = int(((cmd_txt.split(" ", 3)[2]).split("t.me/c/", 2)[1]).split('/', 2)[1])
         linksList = [link1, link2]
     except IndexError:
-        return await message.reply_text(text="Use proper format when using the command !\n\nFor example:\n<code>/batch firstmsgLink lastmsgLink</code>", quote=True)
+        return await message.reply_text(text="Use proper format when using the command !\n\nFor example:\n```/batch firstmsgLink lastmsgLink```", quote=True)
     else:
         temp_msg1 = await bot.get_messages(chat_id=BATCH_CHANNEL, message_ids=link1)
-        if temp_msg1.document and temp_msg1.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
+        if temp_msg1.document and temp_msg1.document.thumbs[0]:
             thumb = temp_msg1.document.thumbs[0] #fetch thumb
-        elif temp_msg1.video and temp_msg1.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
+        elif temp_msg1.video and temp_msg1.video.thumbs[0]:
             thumb = temp_msg1.video.thumbs[0] #fetch thumb
-        elif temp_msg1.audio and temp_msg1.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
+        elif temp_msg1.audio and temp_msg1.audio.thumbs[0]:
             thumb = temp_msg1.audio.thumbs[0] #fetch thumb
         else:
-            thumb = None #if file_type is not in ['document', 'video', 'audio']: assign None to thumb var
+            thumb = None
         if thumb is None:
             reply_msg = await message.reply_photo(
                 photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
-                caption="Please Wait...", 
+                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>", 
                 quote=True
             )
         else:
-            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
+            thumb_jpg = await bot.download_media(thumb)
             reply_msg = await message.reply_photo(
                 photo=thumb_jpg,
-                caption="Please Wait...",
+                caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
                 quote=True,
                 parse_mode=enums.ParseMode.HTML
             )
-            os.remove(thumb_jpg) #remove thumb from current working dir
+            os.remove(thumb_jpg)
         await save_batch_in_channel(bot, message, reply_msg, linksList)
 
 @Bot.on_message(filters.command("set_caption") & filters.private)
