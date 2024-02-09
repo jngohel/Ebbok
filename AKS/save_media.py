@@ -39,7 +39,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         file_er_id = str(forwarded_msg.id)
         user_id = message.from_user.id
         user = await db.get_user(user_id)
-        stream = f"{URL}watch/{forwarded_msg.id}"
+        stream = f"{URL}watch/{getFile.id}"
         link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
         short_link = await db.get_shortlink(user, stream)
         share_link = f"https://telegram.me/share/url?url={short_link}"
