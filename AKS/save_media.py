@@ -73,10 +73,6 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
 
 async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message, linksList: list):
     try:
-        await edit_txt.edit_caption(
-            caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
-            parse_mode=enums.ParseMode.HTML
-        )
         userTemp = await db.get_user(edit_txt.reply_to_message.from_user.id)
         targetChannel = userTemp.get("channel_id")
         fileCount = int(linksList[1]) - int(linksList[0])
@@ -97,61 +93,28 @@ async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message
         msg = await bot.send_message(
             chat_id=DB_CHANNEL,
             text=msg_ids,
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Delete Batch", callback_data="close_data")
-                    ]
-                ]
-            )
+            disable_web_page_preview=True
         )
         user_id = message.from_user.id
         user = await db.get_user(user_id)
-        share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(str(msg.id))}"
-        short_link = await db.get_shortlink(user, share_link)
+        link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(str(msg.id))}"
+        short_link = await db.get_shortlink(user, link)
+        share_link = f"https://telegram.me/share/url?url={short_link}"
+        btn = [[
+            InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
+            InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
+        ]]
+        reply_markup=InlineKeyboardMarkup(btn)
         copyNeeded = await edit_txt.edit_caption(
             caption=f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: `{short_link}` \n\nJust Click the link to get your files!",
             parse_mode=enums.ParseMode.MARKDOWN,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Original Link", url=share_link),
-                        InlineKeyboardButton("Short Link", url=short_link)
-                    ]
-                ]
-            )
+            reply_markup=reply_markup
         )
         if userTemp and targetChannel:
             await copyNeeded.copy(chat_id=int(targetChannel))
-        await bot.send_message(
-            chat_id=int(LOG_CHANNEL),
-            text=f"#BATCH_SAVE:\n\n[{edit_txt.reply_to_message.from_user.first_name}](tg://user?id={edit_txt.reply_to_message.from_user.id}) Got Batch Link!",
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Original Link", url=share_link),
-                        InlineKeyboardButton("Short Link", url=short_link)
-                    ]
-                ]
-            )
-        )
     except Exception as err:
         print(err)
         await edit_txt.edit_caption(
             caption=f"Something Went Wrong!\n\n**Error:** `{err}`",
             parse_mode=enums.ParseMode.MARKDOWN
-        )
-        await bot.send_message(
-            chat_id=int(LOG_CHANNEL),
-            text=f"#ERROR_TRACEBACK:\nGot Error from `{str(edit_txt.chat.id)}` !!\n\n**Traceback:** `{err}`",
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Ban User", callback_data=f"ban_user_{str(edit_txt.chat.id)}")
-                    ]
-                ]
-            )
         )
