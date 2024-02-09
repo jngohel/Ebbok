@@ -36,24 +36,19 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             file_name = 'None'
             file_size = 'None'
             duration = 'None'
-        file_er_id = str(forwarded_msg.id)
         user_id = message.from_user.id
         user = await db.get_user(user_id)
         aks = await message.forward(BIN_CHANNEL)
         aks_file = await bot.get_messages(BIN_CHANNEL, aks.id)
         stream = f"https://{URL}/watch/{aks_file.id}?hash={get_hash(aks_file)}"
-        link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
         short_link = await db.get_shortlink(user, stream)
         share_link = f"https://telegram.me/share/url?url={short_link}"
         caption = user.get('caption')
         default_caption = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
         msg = caption.format(short_link=short_link, file_name=file_name, file_size=get_size(file_size), duration=duration) if caption else default_caption
-        #btn=[[
-            #InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
-            #InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
-        #]]
         btn=[[
-            InlineKeyboardButton("stream", url=stream)
+            InlineKeyboardButton("ᴅᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ", url=short_link),
+            InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
         ]]
         reply_markup = InlineKeyboardMarkup(btn)
         edited_thumb = await editable.edit_caption(
