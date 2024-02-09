@@ -4,7 +4,7 @@ from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME, BATCH_CHANNEL, URL
 from pyrogram import Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
-from AKS.helpers import str_to_b64, calc, get_size
+from AKS.helpers import str_to_b64, calc, get_size, get_hash
 from AKS.database import db
     
 async def forward_to_channel(bot: Client, message: Message, editable: Message):
@@ -39,7 +39,7 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         file_er_id = str(forwarded_msg.id)
         user_id = message.from_user.id
         user = await db.get_user(user_id)
-        stream = f"https://{URL}/watch/{getFile.id}"
+        stream = f"https://{URL}/watch/{getFile.id}?hash={get_hash(getFile)}"
         link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
         short_link = await db.get_shortlink(user, stream)
         share_link = f"https://telegram.me/share/url?url={short_link}"
