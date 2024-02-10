@@ -38,7 +38,7 @@ def get_size(size):
         size /= 1024.0
     return "%.2f %s" % (size, units[i])
 
-def get_file_id(message: "Message") -> Any:
+def get_media_from_message(message: "Message") -> Any:
     media_types = (
         "audio",
         "document",
@@ -48,15 +48,16 @@ def get_file_id(message: "Message") -> Any:
         "video",
         "voice",
         "video_note",
-    )    
-    if message.media:
-        for attr in media_types:
-            media = getattr(message, attr, None)
-            if media:
-                setattr(media, "message_type", attr)
-                return media
+    )
+    for attr in media_types:
+        media = getattr(message, attr, None)
+        if media:
+            return media
 
 def get_hash(media_msg: Message) -> str:
-    media = get_file_id(media_msg)
+    media = get_media_from_message(media_msg)
     return getattr(media, "file_unique_id", "")[:6]
 
+def get_name(media_msg: Message) -> str:
+    media = get_media_from_message(media_msg)
+    return getattr(media, 'file_name', "")
