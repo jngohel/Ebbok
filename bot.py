@@ -127,13 +127,13 @@ async def addBatch(bot: Client, message: Message):
     user = await db.get_user(user_id)
     batch = user.get("batch_channel")
     if not batch:
-        return await message.reply_text("First, please set your batch channel ID using /set_batch_channel command.")
+        return await message.reply_text("<b>‼️ꜰɪʀꜱᴛ ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ꜱᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ ᴛᴏ ꜱᴛᴏʀᴇ ʏᴏᴜʀ ʙᴀᴛᴄʜ ꜰɪʟᴇꜱ.\n\nꜱᴇᴛ ᴜꜱɪɴɢ ᴛʜɪꜱ - <code>/ꜱᴇᴛ_ʙᴀᴛᴄʜ_ᴄʜᴀɴɴᴇʟ -100********</code>\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ</b>")
     try:
         link1 = int(((cmd_txt.split(" ", 3)[1]).split("t.me/c/", 2)[1]).split('/', 2)[1])
         link2 = int(((cmd_txt.split(" ", 3)[2]).split("t.me/c/", 2)[1]).split('/', 2)[1])
         linksList = [link1, link2]
     except IndexError:
-        return await message.reply_text(text="Use proper format when using the command !\n\nFor example:\n```/batch firstmsgLink lastmsgLink```", quote=True)
+        return await message.reply_text(text="<b>ᴜꜱᴇ ᴘʀᴏᴘᴇʀ ꜰᴏʀᴍᴀᴛ ʟɪᴋᴇ\n\n<code>/batch ᴘᴏꜱᴛʟɪɴᴋ1 ᴘᴏꜱᴛʟɪɴᴋ2</code></b>", quote=True)
     else:
         temp_msg1 = await bot.get_messages(chat_id=batch, message_ids=link1)
         if temp_msg1.document and temp_msg1.document.thumbs[0]:
@@ -211,24 +211,29 @@ async def set_channel(client, message):
             try:
                 chat = await client.get_chat(channel_id)
             except Exception as e:
-                return await message.reply_text(f"{channel_id} is invalid!\nMake sure this bot admin in that channel.\n\nError - {e}")
+                return await message.reply_text(f"<b><code>{channel_id}</code> ɪɴᴠᴀʟɪᴅ!!\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ\n\nError - {e}</b>")
         await db.update_forward_channels(user_id, ids)      
-        await message.reply_text(f"<b>✅️ Successfully set your target channel IDs\n\n<code>{', '.join(map(str, ids))}</code></b>")
+        await message.reply_text(f"<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ\n\n<code>{', '.join(map(str, ids))}</code></b>")
     except ValueError:
-        await message.reply_text("<b>Send channel IDs separated by spaces with the command\n\n⚠️ Note - Make sure the bot is admin in your channels</b>")
+        await message.reply_text("<b>ꜱᴇɴᴅ ᴍᴇ ᴄʜᴀɴɴᴇʟ ɪᴅ ꜱᴇᴘᴀʀᴀᴛᴇᴅ ʙʏ ᴛʜᴇ ꜱᴘᴀᴄᴇ ᴡɪᴛʜ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ.\n\nᴇx - <code>/ꜱᴇᴛ_ᴄʜᴀɴɴᴇʟ -100******** -100*******</code>\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
 @Bot.on_message(filters.command("remove_channel") & filters.private)
 async def remove_channel(client, message):
     user_id = message.from_user.id
+    user = await db.get_user(user_id)
+    if not user or not user.get('channel_ids'):
+        await message.reply_text("<b>⚠️ ɴᴏ ᴀɴʏ ᴄʜᴀɴɴᴇʟ ɪᴅ ꜰᴏᴜɴᴅ</b>")
+        return
     try:
         _, *channel_ids = message.text.split(" ")
+        if not channel_ids:
+            await message.reply_text("<b>⚠️ ᴘʟᴇᴀꜱᴇ ᴘʀᴏᴠɪᴅᴇ ᴄʜᴀɴɴᴇʟ ɪᴅꜱ ᴡɪᴛʜ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ</b>")
+            return
         ids = [int(channel_id) for channel_id in channel_ids]
         await db.remove_forward_channel(user_id, ids)
         await message.reply_text("<b>ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ ʀᴇᴍᴏᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ✅️</b>")
-    except ValueError:
-        await message.reply_text("<b>Send channel IDs separated by spaces with the command</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
@@ -241,11 +246,9 @@ async def set_batch_channel(client, message):
         try:
             chat = await client.get_chat(channel_id)
         except Exception as e:
-            return await message.reply_text(f"{channel_id} is invalid!\nMake sure this bot is an admin in that channel.\n\nError - {e}")
+            return await message.reply_text(f"<b><code>{channel_id}</code> ɪɴᴠᴀʟɪᴅ!!\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ\n\nError - {e}</b>")
         await db.update_batch_channel(user_id, channel_id)
-        await message.reply_text(f"<b>✅️ Successfully set your batch channel ID\n\n<code>{channel_id}</code></b>")
-    except ValueError:
-        await message.reply_text("<b>Send the channel ID with the command\n\n⚠️ Note - Make sure the bot is an admin in your channel</b>")
+        await message.reply_text(f"<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ʙᴀᴛᴄʜ ᴄʜᴀɴɴᴇʟ ɪᴅ\n\n<code>{channel_id}</code></b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
@@ -254,7 +257,7 @@ async def remove_batch_channel(client, message):
     user_id = message.from_user.id
     try:
         await db.remove_batch_channel(user_id)
-        await message.reply_text("<b>ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ ʀᴇᴍᴏᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ✅️</b>")
+        await message.reply_text("<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ʀᴇᴍᴏᴠᴇᴅ ʏᴏᴜʀ ʙᴀᴛᴄʜ ᴄʜᴀɴɴᴇʟ ɪᴅ</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
@@ -282,14 +285,25 @@ async def info(client, message):
             batch = str(batch_channel)
         else:
             batch = "ɴᴏᴛ ꜱᴇᴛ"
-        text = f"""📊 ꜱʜᴏʀᴛᴇɴᴇʀ - `{web}`
+        target_channel = user.get('channel_ids')
+        if target_channel:
+            target = ', '.join(map(str, target_channel))
+        else:
+            target = "ɴᴏᴛ ꜱᴇᴛ"
+        cap = user.get('caption')
+        if cap:
+            caption = user.get('caption')
+        else:
+            caption = "ɴᴏᴛ ꜱᴇᴛ"
+        text = f"""<b>📊 ꜱʜᴏʀᴛᴇɴᴇʀ - `{web}`
+        
 ‼️ ᴀᴘɪ - `{api}`
 
-♻️ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{', '.join(map(str, user.get('channel_ids', [])))}`
+♻️ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{target}`
 
 📥 ʙᴀᴛᴄʜ ᴄʜᴀɴɴᴇʟ - `{batch}`
 
-📝 ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user.get('caption')}`"""
+📝 ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{caption}`</b>"""
         await message.reply_text(text, reply_markup=reply_markup)
 
 @Bot.on_message(filters.private & filters.command("broadcast") & filters.user(ADMINS) & filters.reply)
