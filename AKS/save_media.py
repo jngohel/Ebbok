@@ -79,6 +79,7 @@ async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message
     try:
         userTemp = await db.get_user(edit_txt.reply_to_message.from_user.id)
         targetChannel = userTemp.get("channel_id")
+        batch = userTemp.get("batch_channel")
         fileCount = int(linksList[1]) - int(linksList[0])
         i = 1
         while (i<fileCount):
@@ -86,7 +87,7 @@ async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message
             i+=1
         linksList.sort()
         msg_ids = ""
-        for msg in (await bot.get_messages(chat_id=int(BATCH_CHANNEL), message_ids=linksList)):
+        for msg in (await bot.get_messages(chat_id=int(batch), message_ids=linksList)):
             if msg is None:
                 continue
             to_DB = await msg.forward(DB_CHANNEL)
