@@ -110,7 +110,7 @@ class Database:
     async def delete_user(self, user_id):
         await self.col.delete_many({'id': int(user_id)})
 
-    async def update_batch_channel(user_id, channel_id):
+    async def update_batch_channel(self, user_id, channel_id):
         user_id = int(user_id)
         my_query = {"user_id": user_id}
         if channel_id:
