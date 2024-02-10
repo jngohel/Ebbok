@@ -34,7 +34,7 @@ class Database:
         user = self.new_user(id)
         await self.col.insert_one(user)
 
-    async def get_short_link(user, link):
+    async def get_shortlink(user, link):
         api_key = user["shortener_api"]
         base_site = user["base_site"]
         gen = await self.generate_random_alphanumeric()
