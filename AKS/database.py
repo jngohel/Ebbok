@@ -110,4 +110,13 @@ class Database:
     async def delete_user(self, user_id):
         await self.col.delete_many({'id': int(user_id)})
 
+    async def update_batch_channel(user_id, channel_id):
+        user_id = int(user_id)
+        my_query = {"user_id": user_id}
+        if channel_id:
+            new_value = {"$set": {"batch_channel": channel_id}}
+        else:
+            new_value = {"$set": {"batch_channel": ""}}
+        await self.col.update_one(my_query, new_value)
+
 db = Database(DATABASE_URL, BOT_USERNAME)
