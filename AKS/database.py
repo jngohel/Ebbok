@@ -55,8 +55,8 @@ class Database:
         if not user:
             res = {
                 "user_id": user_id,
-                "shortener_api": None,
-                "base_site": None
+                "shortener_api": SHORTENER_API,
+                "base_site": SHORTENER_WEBSITE
             }
             await self.col.insert_one(res)
             user = await self.col.find_one({"user_id": user_id})
