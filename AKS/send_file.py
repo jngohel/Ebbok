@@ -6,7 +6,7 @@ import random
 from info import DB_CHANNEL, FORWARD_AS_COPY, BOT_USERNAME, DELETE_TIME, BIN_CHANNEL, URL
 from pyrogram import Client
 from urllib.parse import quote_plus
-from pyrogram.types import Message 
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
 from AKS.helpers import str_to_b64, get_readable_time, calc, get_size, get_hash, get_name
 from AKS.database import db
