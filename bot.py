@@ -202,6 +202,11 @@ async def set_channel(client, message):
     try:
         _, *channel_ids = message.text.split(" ")
         ids = [int(channel_id) for channel_id in channel_ids]
+        for channel_id in ids:
+            try:
+                chat = await client.get_chat(channel_id)
+            except Exception as e:
+                return await message.reply_text(f"{channel_id} is invalid!\nMake sure this bot admin in that channel.\n\nError - {e}")
         await db.update_forward_channels(user_id, ids)      
         await message.reply_text(f"<b>✅️ Successfully set your target channel IDs\n\n<code>{', '.join(map(str, ids))}</code></b>")
     except ValueError:
@@ -213,8 +218,12 @@ async def set_channel(client, message):
 async def remove_channel(client, message):
     user_id = message.from_user.id
     try:
-        await db.remove_forward_channel(user_id)
+        _, *channel_ids = message.text.split(" ")
+        ids = [int(channel_id) for channel_id in channel_ids]
+        await db.remove_forward_channel(user_id, ids)
         await message.reply_text("<b>ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ ʀᴇᴍᴏᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ✅️</b>")
+    except ValueError:
+        await message.reply_text("<b>Send channel IDs separated by spaces with the command</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
@@ -230,7 +239,7 @@ async def info(client, message):
         text = f"""📊 ꜱʜᴏʀᴛᴇɴᴇʀ - `{user.get('base_site', SHORTENER_WEBSITE)}`
 ‼️ ᴀᴘɪ - `{user.get('shortener_api', SHORTENER_API)}`
 
-♻️ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{', '.join(map(str, user.get('channel_id', [])))}`
+♻️ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{', '.join(map(str, user.get('channel_ids', [])))}`
 
 📝 ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user.get('caption')}`"""
         await message.reply_text(text, reply_markup=reply_markup)
