@@ -123,6 +123,11 @@ async def main(bot: Client, message: Message):
 @Bot.on_message(filters.command("batch") & filters.private)
 async def addBatch(bot: Client, message: Message):
     cmd_txt = message.text
+    user_id = message.from_user.id
+    user = await db.get_user(user_id)
+    batch = user.get("batch_channel")
+    if not batch:
+        return await message.reply_text("First, please set your batch channel ID using /set_batch_channel command.")
     try:
         link1 = int(((cmd_txt.split(" ", 3)[1]).split("t.me/c/", 2)[1]).split('/', 2)[1])
         link2 = int(((cmd_txt.split(" ", 3)[2]).split("t.me/c/", 2)[1]).split('/', 2)[1])
@@ -130,13 +135,13 @@ async def addBatch(bot: Client, message: Message):
     except IndexError:
         return await message.reply_text(text="Use proper format when using the command !\n\nFor example:\n```/batch firstmsgLink lastmsgLink```", quote=True)
     else:
-        temp_msg1 = await bot.get_messages(chat_id=BATCH_CHANNEL, message_ids=link1)
+        temp_msg1 = await bot.get_messages(chat_id=batch, message_ids=link1)
         if temp_msg1.document and temp_msg1.document.thumbs[0]:
-            thumb = temp_msg1.document.thumbs[0] #fetch thumb
+            thumb = temp_msg1.document.thumbs[0]
         elif temp_msg1.video and temp_msg1.video.thumbs[0]:
-            thumb = temp_msg1.video.thumbs[0] #fetch thumb
+            thumb = temp_msg1.video.thumbs[0]
         elif temp_msg1.audio and temp_msg1.audio.thumbs[0]:
-            thumb = temp_msg1.audio.thumbs[0] #fetch thumb
+            thumb = temp_msg1.audio.thumbs[0]
         else:
             thumb = None
         if thumb is None:
@@ -227,6 +232,23 @@ async def remove_channel(client, message):
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
+@Bot.on_message(filters.command("set_batch_channel") & filters.private)
+async def set_batch_channel(client, message):
+    user_id = message.from_user.id
+    try:
+        _, channel_id = message.text.split(" ", 1)
+        channel_id = int(channel_id)
+        try:
+            chat = await client.get_chat(channel_id)
+        except Exception as e:
+            return await message.reply_text(f"{channel_id} is invalid!\nMake sure this bot is an admin in that channel.\n\nError - {e}")
+        await db.update_batch_channel(user_id, channel_id)
+        await message.reply_text(f"<b>✅️ Successfully set your batch channel ID\n\n<code>{channel_id}</code></b>")
+    except ValueError:
+        await message.reply_text("<b>Send the channel ID with the command\n\n⚠️ Note - Make sure the bot is an admin in your channel</b>")
+    except Exception as e:
+        await message.reply_text(f"<b>Error: <code>{e}</code></b>")
+
 @Bot.on_message(filters.command('info') & filters.private)
 async def info(client, message):
     btn = [[
@@ -240,6 +262,8 @@ async def info(client, message):
 ‼️ ᴀᴘɪ - `{user.get('shortener_api', SHORTENER_API)}`
 
 ♻️ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{', '.join(map(str, user.get('channel_ids', [])))}`
+
+📥 ʙᴀᴛᴄʜ ᴄʜᴀɴɴᴇʟ - `{user.get('batch_channel')}`
 
 📝 ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user.get('caption')}`"""
         await message.reply_text(text, reply_markup=reply_markup)
