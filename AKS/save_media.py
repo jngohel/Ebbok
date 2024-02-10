@@ -77,8 +77,9 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
 
 async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message, linksList: list):
     try:
-        userTemp = await db.get_user(edit_txt.reply_to_message.from_user.id)
-        batch = userTemp.get("batch_channel")
+        userid = message.from_user.id
+        user = await db.get_user(userid)
+        batch = user.get("batch_channel")
         fileCount = int(linksList[1]) - int(linksList[0])
         i = 1
         while (i<fileCount):
@@ -86,7 +87,7 @@ async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message
             i+=1
         linksList.sort()
         msg_ids = ""
-        for msg in (await bot.get_messages(chat_id=int(batch), message_ids=linksList)):
+        for msg in (await bot.get_messages(chat_id=batch, message_ids=linksList)):
             if msg is None:
                 continue
             to_DB = await msg.forward(DB_CHANNEL)
@@ -109,14 +110,14 @@ async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=share_link)
         ]]
         reply_markup=InlineKeyboardMarkup(btn)
-        copyNeeded = await edit_txt.edit_caption(
+        msg = await edit_txt.edit_caption(
             caption=f"**Batch Files Stored in my Database!**\n\nHere is the Permanent Link of your files: `{short_link}` \n\nJust Click the link to get your files!",
             parse_mode=enums.ParseMode.MARKDOWN,
             reply_markup=reply_markup
         )
-        if userTemp.get("channel_ids"):
-            for channel_id in userTemp["channel_ids"]:
-               await copyNeeded.copy(channel_id) 
+        if user.get("batch_channel"):
+            for channel_id in user["batch_channel"]:
+               await msg.copy(channel_id) 
     except Exception as err:
         print(err)
         await edit_txt.edit_caption(
