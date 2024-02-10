@@ -71,11 +71,11 @@ class Database:
             user = await self.col.find_one({"user_id": user_id})
         return user
 
-    async def update_user_info(self, user_id, value:dict):
+    async def update_forward_channels(self, user_id, channel_ids):
         user_id = int(user_id)
         my_query = {"user_id": user_id}
-        new_value = { "$set": value }
-        await self.col.update_one(my_query, new_value)
+        new_value = {"$set": {"channel_ids": channel_ids}}
+        await self.col.update_one(my_query, new_value, upsert=True)
 
     async def update_forward_channel(self, user_id, channel_id):
         user_id = int(user_id)
