@@ -1,6 +1,6 @@
 import asyncio
 import traceback
-from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME, BATCH_CHANNEL, BIN_CHANNEL, URL
+from info import DB_CHANNEL, LOG_CHANNEL, BOT_USERNAME, BIN_CHANNEL, URL
 from pyrogram import Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
