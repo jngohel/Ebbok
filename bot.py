@@ -15,8 +15,6 @@ from AKS.force_sub_handler import handle_force_sub, get_invite_link
 from AKS.broadcast import users_broadcast
 from AKS.save_media import save_media_in_channel, save_batch_in_channel
 
-MediaList = {}
-
 Bot = Client(
     name=BOT_USERNAME,
     api_id=API_ID,
