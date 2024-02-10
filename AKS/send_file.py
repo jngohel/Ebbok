@@ -79,16 +79,17 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     btn = [[
                         InlineKeyboardButton("ꜱᴛʀᴇᴀᴍ ʟɪɴᴋ", url=stream)
                     ]]
+                    reply_markup=InlineKeyboardMarkup(btn)
                     return await bot.send_cached_media(
                         chat_id=user_id,
                         file_id=file_id,
-                        reply_markup=InlineKeyboardMarkup(btn),
                         caption=user['caption'].format(
                             file_name=file_name,
                             file_size=get_size(file_size),
                             duration=duration,
                             short_link=short_link
-                        )       
+                        ),
+                        reply_markup=reply_markup
                     )
                 except FloodWait as e:
                     await asyncio.sleep(e.value)
@@ -110,8 +111,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 return await bot.forward_messages(
                     chat_id=user_id,
                     from_chat_id=DB_CHANNEL,
-                    message_ids=file_id,
-                    reply_markup=InlineKeyboardMarkup(btn)
+                    message_ids=file_id
                 )
     except Exception as e:
         print(f"Error in media_forward: {e}")
