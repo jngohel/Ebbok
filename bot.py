@@ -126,7 +126,7 @@ async def addBatch(bot: Client, message: Message):
     user = await db.get_user(user_id)
     batch = user.get("batch_channel")
     if not batch:
-        return await message.reply_text("<b>‼️ꜰɪʀꜱᴛ ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ꜱᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ ᴛᴏ ꜱᴛᴏʀᴇ ʏᴏᴜʀ ʙᴀᴛᴄʜ ꜰɪʟᴇꜱ.\n\nꜱᴇᴛ ᴜꜱɪɴɢ ᴛʜɪꜱ - <code>/ꜱᴇᴛ_ʙᴀᴛᴄʜ_ᴄʜᴀɴɴᴇʟ -100********</code>\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ</b>")
+        return await message.reply_text("<b>‼️ꜰɪʀꜱᴛ ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ꜱᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ ᴛᴏ ꜱᴛᴏʀᴇ ʏᴏᴜʀ ʙᴀᴛᴄʜ ꜰɪʟᴇꜱ.\n\nꜱᴇᴛ ᴜꜱɪɴɢ ᴛʜɪꜱ - <code>/set_batch_channel -100********</code>\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ</b>")
     try:
         link1 = int(((cmd_txt.split(" ", 3)[1]).split("t.me/c/", 2)[1]).split('/', 2)[1])
         link2 = int(((cmd_txt.split(" ", 3)[2]).split("t.me/c/", 2)[1]).split('/', 2)[1])
