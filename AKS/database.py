@@ -35,22 +35,16 @@ class Database:
         await self.col.insert_one(user)
 
     async def get_shortlink(self, user, link):
-        if 'base_site' in user.keys():
-            base_site = user["base_site"]
-        else:
-            base_site = None
-        if 'shortener_api' in user.keys():
-            api_key = user["shortener_api"]
-        else:
-            api_key = None
-        if not base_site or not api_key:
+        base_site = user.get("base_site", None)
+        api_key = user.get("shortener_api", None)
+        if base_site is None or api_key is None:
             base_site = SHORTENER_WEBSITE
             api_key = SHORTENER_API
         gen = await self.generate_random_alphanumeric()
         response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={gen}")
         data = response.json()
-        if data["status"] == "success" or response.status_code == 200:
-            return data["shortenedUrl"]
+        if data.get("status") == "success" or response.status_code == 200:
+            return data.get("shortenedUrl")
 
     async def remove_shortener(self, user_id):
         user_id = int(user_id)
