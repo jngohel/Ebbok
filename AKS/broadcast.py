@@ -30,16 +30,14 @@ async def send_msg(user_id, message):
     except Exception as e:
         return 500, f"{user_id} : {traceback.format_exc()}\n"
 
-async def main_broadcast_handler(m, db):
+async def users_broadcast(m, db):
     all_users = await db.get_all_users()
     broadcast_msg = m.reply_to_message
     while True:
         broadcast_id = ''.join([random.choice(string.ascii_letters) for i in range(3)])
         if not broadcast_ids.get(broadcast_id):
             break
-    out = await m.reply_text(
-        text=f"Broadcast Started! You will be notified with log file when all the users are notified."
-    )
+    out = await m.reply_text(text=f"Broadcast Started! You will be notified with log file when all the users are notified.")
     start_time = time.time()
     total_users = await db.total_users_count()
     done = 0
@@ -82,10 +80,7 @@ async def main_broadcast_handler(m, db):
     await asyncio.sleep(3)
     await out.delete()
     if failed == 0:
-        await m.reply_text(
-            text=f"broadcast completed in `{completed_in}`\n\nTotal users - {total_users}\nDone - {done}\nSuccess - {success}\nFailed - {failed}",
-            quote=True
-        )
+        await m.reply_text(text=f"broadcast completed in `{completed_in}`\n\nTotal users - {total_users}\nDone - {done}\nSuccess - {success}\nFailed - {failed}", quote=True)
     else:
         await m.reply_document(
             document='broadcast.txt',
