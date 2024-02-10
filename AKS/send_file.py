@@ -68,13 +68,17 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     print(f"File info fetch error: {e}")
                     return
                 try:
-                    aks = await bot.forward_messages(BIN_CHANNEL)
-                    aks_file = await bot.get_messages(BIN_CHANNEL, aks.id)
+                    aks = await bot.forward_messages(
+                        chat_id=BIN_CHANNEL,
+                        from_chat_id=DB_CHANNEL,
+                        message_ids=file_id
+                    )
+                    aks_file = await bot.get_messages(BIN_CHANNEL, message_ids=aks.id)
                     stream = f"https://{URL}/watch/{aks_file.id}{file_name}?hash={get_hash(aks_file)}"
-                    btn=[[
+                    btn = [[
                         InlineKeyboardButton("ꜱᴛʀᴇᴀᴍ ʟɪɴᴋ", url=stream)
                     ]]
-                    reply_markup=InlineKeyboardMarkup(btn)
+                    reply_markup = InlineKeyboardMarkup(btn)
                     file_er_id = str(file_id)
                     share_link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
                     return await bot.send_cached_media(
@@ -95,13 +99,17 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     print(f"File send error: {e}")
                     print(traceback.format_exc())
             else:
-                aks = await bot.forward_messages(BIN_CHANNEL)
-                aks_file = await bot.get_messages(BIN_CHANNEL, aks.id)
+                aks = await bot.forward_messages(
+                    chat_id=BIN_CHANNEL,
+                    from_chat_id=DB_CHANNEL,
+                    message_ids=file_id
+                )
+                aks_file = await bot.get_messages(BIN_CHANNEL, message_ids=aks.id)
                 stream = f"https://{URL}/watch/{aks_file.id}{file_name}?hash={get_hash(aks_file)}"
-                btn=[[
+                btn = [[
                     InlineKeyboardButton("ꜱᴛʀᴇᴀᴍ ʟɪɴᴋ", url=stream)
                 ]]
-                reply_markup=InlineKeyboardMarkup(btn)
+                reply_markup = InlineKeyboardMarkup(btn)
                 return await bot.forward_messages(
                     chat_id=user_id,
                     from_chat_id=DB_CHANNEL,
