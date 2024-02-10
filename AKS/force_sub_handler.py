@@ -15,44 +15,25 @@ async def get_invite_link(bot: Client, chat_id: Union[str, int]):
         return await get_invite_link(bot, chat_id)
 
 async def handle_force_sub(bot: Client, cmd: Message):
-    if AUTH_CHANNEL and AUTH_CHANNEL.startswith("-100"):
+    if not AUTH_CHANNEL:
+        return 200    
+    if AUTH_CHANNEL.startswith("-100"):
         channel_chat_id = int(AUTH_CHANNEL)
-    elif AUTH_CHANNEL and (not AUTH_CHANNEL.startswith("-100")):
-        channel_chat_id = AUTH_CHANNEL
     else:
-        return 200
+        channel_chat_id = AUTH_CHANNEL    
     try:
-        user = await bot.get_chat_member(chat_id=channel_chat_id, user_id=cmd.from_user.id)
-        if user.status == "kicked":
-            await bot.send_message(
-                chat_id=cmd.from_user.id,
-                text="Sorry Sir, You are Banned to use me",
-                disable_web_page_preview=True
-            )
-            return 400
-    except UserNotParticipant:
-        try:
-            invite_link = await get_invite_link(bot, chat_id=channel_chat_id)
-        except Exception as err:
-            print(f"Unable to do Force Subscribe to {AUTH_CHANNEL}\n\nError: {err}")
-            return 200
+        invite_link = await get_invite_link(bot, chat_id=channel_chat_id)
+        btn = [
+            [InlineKeyboardButton("🚫 ᴊᴏɪɴ ɴᴏᴡ 🚫", url=invite_link.invite_link)],
+            [InlineKeyboardButton("♻️ ᴛʀʏ ᴀɢᴀɪɴ ♻️", callback_data="checksub")]
+        ]
+        reply_markup = InlineKeyboardMarkup(btn)     
         await bot.send_message(
             chat_id=cmd.from_user.id,
-            text="**Please Join My Updates Channel to use this Bot!**\n\n"
-                 "Due to Overload, Only Channel Subscribers can use this Bot!",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("🤖 Join Updates Channel", url=invite_link.invite_link)
-                    ],
-                    [
-                        InlineKeyboardButton("🔄 Refresh 🔄", callback_data="checksub")
-                    ]
-                ]
-            )
+            text="<b><i>🙁 ғɪʀꜱᴛ ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴛʜᴇɴ ʏᴏᴜ ᴡɪʟʟ ɢᴇᴛ ᴍᴏᴠɪᴇ, ᴏᴛʜᴇʀᴡɪꜱᴇ ʏᴏᴜ ᴡɪʟʟ ɴᴏᴛ ɢᴇᴛ ɪᴛ.\n\nᴄʟɪᴄᴋ ᴊᴏɪɴ ɴᴏᴡ ʙᴜᴛᴛᴏɴ 👇</i></b>",
+            reply_markup=reply_markup
         )
         return 400
     except Exception as e:
-        print(e)
+        print(f"Unable to do Force Subscribe to {AUTH_CHANNEL}\n\nError: {e}")
         return 200
-    return 200
