@@ -25,3 +25,9 @@ class script(object):
 /remove_batch_channel - ᴛᴏ ʀᴇᴍᴏᴠᴇ ʙᴀᴛᴄʜ ᴄʜᴀɴɴᴇʟ.
 /batch - ᴛᴏ ꜱᴛᴏʀᴇ ʙᴀᴛᴄʜ ꜰɪʟᴇꜱ.
 /info - ᴛᴏ ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴀʟʟ ᴄᴏɴɴᴇᴄᴛᴇᴅ ᴅᴇᴛᴀɪʟꜱ.</b>"""
+
+    NEW_USER_TEXT = """#New_Users
+
+Name - {}
+Id - <code></code>
+Bot - {}"""
