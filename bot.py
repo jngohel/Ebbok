@@ -357,16 +357,9 @@ async def button(bot: Client, cmd: CallbackQuery):
                 channel_chat_id = AUTH_CHANNEL
             try:
                 user = await bot.get_chat_member(channel_chat_id, cmd.message.chat.id)
-                if user.status == "kicked":
-                    await cmd.message.edit(
-                        text="Sorry Sir, You are Banned to use me.",
-                        chat_id = cmd.from_user.id,
-                        disable_web_page_preview=True
-                    )
-                    return
             except UserNotParticipant:
                 invite_link = await get_invite_link(bot, chat_id=channel_chat_id)
-                await cmd.answer("I like Your Smartness But Don't Be Oversmart! 😑", show_alert=True,)
+                await cmd.answer("😶 ɪ ʟɪᴋᴇ ʏᴏᴜʀ ꜱᴍᴀʀᴛɴᴇꜱꜱ ʙᴜᴛ ᴅᴏɴ'ᴛ ʙᴇ ᴏᴠᴇʀꜱᴍᴀʀᴛ!", show_alert=True)
                 return
             except Exception:
                 await cmd.message.edit(
