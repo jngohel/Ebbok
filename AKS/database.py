@@ -35,11 +35,8 @@ class Database:
         await self.col.insert_one(user)
 
     async def get_shortlink(self, user, link):
-        base_site = user.get("base_site", None)
-        api_key = user.get("shortener_api", None)
-        if base_site is None or api_key is None:
-            base_site = SHORTENER_WEBSITE
-            api_key = SHORTENER_API
+        base_site = user.get('base_site', SHORTENER_WEBSITE)
+        api_key = user.get('shortener_api', SHORTENER_API)
         gen = await self.generate_random_alphanumeric()
         response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={gen}")
         data = response.json()
@@ -64,6 +61,12 @@ class Database:
             await self.col.insert_one(res)
             user = await self.col.find_one({"user_id": user_id})
         return user
+
+    async def update_user_info(self, user_id, value:dict):
+        user_id = int(user_id)
+        my_query = {"user_id": user_id}
+        new_value = { "$set": value }
+        await self.col.update_one(my_query, new_value)
 
     async def update_forward_channels(self, user_id, channel_ids):
         user_id = int(user_id)
