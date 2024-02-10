@@ -220,10 +220,6 @@ async def remove_channel(client, message):
     try:
         _, *channel_ids = message.text.split(" ")
         ids = [int(channel_id) for channel_id in channel_ids]
-        user_channels = await db.get_user_channels(user_id)        
-        for channel_id in ids:
-            if channel_id not in user_channels:
-                return await message.reply_text(f"You are not connected to channel ID {channel_id}")       
         await db.remove_forward_channel(user_id, ids)
         await message.reply_text("<b>ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ ʀᴇᴍᴏᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ✅️</b>")
     except ValueError:
