@@ -5,9 +5,10 @@ import string
 import random
 from info import DB_CHANNEL, FORWARD_AS_COPY, BOT_USERNAME, DELETE_TIME, BIN_CHANNEL, URL
 from pyrogram import Client
+from urllib.parse import quote_plus
 from pyrogram.types import Message 
 from pyrogram.errors import FloodWait
-from AKS.helpers import str_to_b64, get_readable_time, calc, get_size, get_hash
+from AKS.helpers import str_to_b64, get_readable_time, calc, get_size, get_hash, get_name
 from AKS.database import db
 
 DLT_SCHEDULE = {}
@@ -74,7 +75,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                         message_ids=file_id
                     )
                     aks_file = await bot.get_messages(BIN_CHANNEL, message_ids=aks.id)
-                    stream = f"https://{URL}/watch/{aks_file.id}{file_name}?hash={get_hash(aks_file)}"
+                    stream = f"https://{URL}/watch/{str(aks_file.id)}/{quote_plus(get_name(aks_file))}?hash={get_hash(aks_file)}"
                     btn = [[
                         InlineKeyboardButton("ꜱᴛʀᴇᴀᴍ ʟɪɴᴋ", url=stream)
                     ]]
@@ -105,7 +106,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     message_ids=file_id
                 )
                 aks_file = await bot.get_messages(BIN_CHANNEL, message_ids=aks.id)
-                stream = f"https://{URL}/watch/{aks_file.id}{file_name}?hash={get_hash(aks_file)}"
+                stream = f"https://{URL}/watch/{str(aks_file.id)}/{quote_plus(get_name(aks_file))}?hash={get_hash(aks_file)}"
                 btn = [[
                     InlineKeyboardButton("ꜱᴛʀᴇᴀᴍ ʟɪɴᴋ", url=stream)
                 ]]
