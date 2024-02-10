@@ -30,4 +30,4 @@ class script(object):
 
 Name - {}
 Id - <code>{}</code>
-Bot - {}"""
+Bot - @{}"""
