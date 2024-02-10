@@ -55,12 +55,8 @@ async def start(bot: Client, cmd: Message):
             try:
                 file_id = int(b64_to_str(usr_cmd).split("_")[-1])
             except (Error, UnicodeDecodeError):
-                file_id = int(usr_cmd.split("_")[-1])
-            btn = [[
-                InlineKeyboardButton("ᴄʟᴏꜱᴇ", callback_data="close_data")
-            ]]
-            reply_markup=InlineKeyboardMarkup(btn) 
-            GetMessage = await bot.get_messages(chat_id=DB_CHANNEL, message_ids=file_id, reply_markup=reply_markup)
+                file_id = int(usr_cmd.split("_")[-1]) 
+            GetMessage = await bot.get_messages(chat_id=DB_CHANNEL, message_ids=file_id)
             message_ids = []
             if GetMessage.text:
                 message_ids = GetMessage.text.split(" ")
