@@ -267,8 +267,18 @@ async def info(client, message):
     user_id = message.from_user.id
     user = await db.get_user(user_id)
     if user:
-        text = f"""📊 ꜱʜᴏʀᴛᴇɴᴇʀ - `{user.get('base_site', SHORTENER_WEBSITE)}`
-‼️ ᴀᴘɪ - `{user.get('shortener_api', SHORTENER_API)}`
+        base_site = user.get('base_site', SHORTENER_WEBSITE)
+        api_key = user.get('shortener_api', SHORTENER_API)
+        if base_site == SHORTENER_WEBSITE:
+            web = base_site + "[ᴅᴇꜰᴀᴜʟᴛ]"
+        else:
+            web = base_site
+        if api_key == SHORTENER_API:
+            api = api_key + "[ᴅᴇꜰᴀᴜʟᴛ]"
+        else:
+            api = api_key
+        text = f"""📊 ꜱʜᴏʀᴛᴇɴᴇʀ - `{web}`
+‼️ ᴀᴘɪ - `{api}`
 
 ♻️ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{', '.join(map(str, user.get('channel_ids', [])))}`
 
