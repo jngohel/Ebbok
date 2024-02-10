@@ -81,7 +81,7 @@ class Database:
         user_id = int(user_id)
         my_query = {"user_id": user_id}
         new_value = {"$set": {"channel_id": channel_id}}
-        await self.col.update_one(my_query, new_value)
+        await self.col.update_one(my_query, new_value, upsert=True)
 
     async def remove_forward_channel(self, user_id):
         user_id = int(user_id)
