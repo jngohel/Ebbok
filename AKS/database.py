@@ -35,8 +35,8 @@ class Database:
         await self.col.insert_one(user)
 
     async def get_shortlink(self, user, link):
-        api_key = user["shortener_api"]
-        base_site = user["base_site"]
+        api_key = user.get("shortener_api", SHORTENER_API)
+        base_site = user.get("base_site", SHORTENER_WEBSITE)
         gen = await self.generate_random_alphanumeric()
         response = requests.get(f"https://{base_site}/api?api={api_key}&url={link}&alias={gen}")
         data = response.json()
