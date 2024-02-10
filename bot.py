@@ -75,7 +75,7 @@ async def start(bot: Client, cmd: Message):
         except Exception as e:
             print(e)
 
-@Bot.on_message((filters.document | filters.video | filters.audio | filters.photo) & ~filters.chat(DB_CHANNEL))
+@Bot.on_message((filters.document | filters.video) & ~filters.chat(DB_CHANNEL))
 async def main(bot: Client, message: Message):
     if message.chat.type == enums.ChatType.PRIVATE:
         await add_user_to_database(bot, message)
@@ -215,7 +215,7 @@ async def set_channel(client, message):
         await db.update_forward_channels(user_id, ids)      
         await message.reply_text(f"<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ\n\n<code>{', '.join(map(str, ids))}</code></b>")
     except ValueError:
-        await message.reply_text("<b>ꜱᴇɴᴅ ᴍᴇ ᴄʜᴀɴɴᴇʟ ɪᴅ ꜱᴇᴘᴀʀᴀᴛᴇᴅ ʙʏ ᴛʜᴇ ꜱᴘᴀᴄᴇ ᴡɪᴛʜ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ.\n\nᴇx - <code>/ꜱᴇᴛ_ᴄʜᴀɴɴᴇʟ -100******** -100*******</code>\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ</b>")
+        await message.reply_text("<b>ꜱᴇɴᴅ ᴍᴇ ᴄʜᴀɴɴᴇʟ ɪᴅ ꜱᴇᴘᴀʀᴀᴛᴇᴅ ʙʏ ᴛʜᴇ ꜱᴘᴀᴄᴇ ᴡɪᴛʜ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ.\n\nᴇx - <code>/set_channel -100******** -100*******</code>\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
@@ -249,12 +249,18 @@ async def set_batch_channel(client, message):
             return await message.reply_text(f"<b><code>{channel_id}</code> ɪɴᴠᴀʟɪᴅ!!\n\n⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ\n\nError - {e}</b>")
         await db.update_batch_channel(user_id, channel_id)
         await message.reply_text(f"<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ꜱᴇᴛ ʏᴏᴜʀ ʙᴀᴛᴄʜ ᴄʜᴀɴɴᴇʟ ɪᴅ\n\n<code>{channel_id}</code></b>")
+    except ValueError:
+        await message.reply_text("<b>ꜱᴇɴᴅ ᴍᴇ ᴄʜᴀɴɴᴇʟ ɪᴅ ᴡɪᴛʜ ᴄᴏᴍᴍᴀɴᴅ ʟɪᴋᴇ\n\n<code>/set_batch_channel -100*********</code>⚠️ ɴᴏᴛᴇ - ᴍᴀᴋᴇ ꜱᴜʀᴇ ʙᴏᴛ ɪꜱ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ</b>")
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
 @Bot.on_message(filters.command("remove_batch_channel") & filters.private)
 async def remove_batch_channel(client, message):
     user_id = message.from_user.id
+    user = await db.get_user(user_id)
+    if not user or not user.get('batch_channel'):
+        await message.reply_text("<b>⚠️ ɴᴏ ᴀɴʏ ᴄʜᴀɴɴᴇʟ ɪᴅ ꜰᴏᴜɴᴅ</b>")
+        return
     try:
         await db.remove_batch_channel(user_id)
         await message.reply_text("<b>✅️ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ʀᴇᴍᴏᴠᴇᴅ ʏᴏᴜʀ ʙᴀᴛᴄʜ ᴄʜᴀɴɴᴇʟ ɪᴅ</b>")
