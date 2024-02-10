@@ -119,4 +119,10 @@ class Database:
             new_value = {"$set": {"batch_channel": ""}}
         await self.col.update_one(my_query, new_value)
 
+    async def remove_batch_channel(self, user_id):
+        user_id = int(user_id)
+        my_query = {"user_id": user_id}
+        new_value = {"$unset": {"batch_channel": ""}}
+        await self.col.update_one(my_query, new_value)
+
 db = Database(DATABASE_URL, BOT_USERNAME)
