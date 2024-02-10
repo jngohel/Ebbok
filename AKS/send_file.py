@@ -16,7 +16,7 @@ async def reply_forward(bot: Client, userID: int | str):
     try:
         await bot.send_message(
             chat_id=int(userID),
-            text=f"Files will be deleted in <code>{get_readable_time(DELETE_TIME)}</code> to avoid copyright issues. Please forward and save them.",
+            text=f"<b>🚫 ɴᴏᴛᴇ - ꜰɪʟᴇꜱ ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ <code>{get_readable_time(DELETE_TIME)}</code> ᴛᴏ ᴀᴠᴏɪᴅ ᴄᴏᴘʏʀɪɢʜᴛ ɪꜱꜱᴜᴇꜱ. ᴘʟᴇᴀꜱᴇ ꜰᴏʀᴡᴀʀᴅ ᴏʀ ꜱᴀᴠᴇ ᴛʜᴇᴍ.</b>",
             disable_web_page_preview=True
         )
     except FloodWait as e:
