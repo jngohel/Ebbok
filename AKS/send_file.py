@@ -5,7 +5,7 @@ import string
 import random
 from info import DB_CHANNEL, FORWARD_AS_COPY, BOT_USERNAME, DELETE_TIME
 from pyrogram import Client
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton 
+from pyrogram.types import Message 
 from pyrogram.errors import FloodWait
 from AKS.helpers import str_to_b64, get_readable_time, calc, get_size
 from AKS.database import db
@@ -70,11 +70,6 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                 try:
                     file_er_id = str(file_id)
                     share_link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
-                    short_link = await db.get_shortlink(user, share_link)
-                    btn = [[
-                        InlineKeyboardButton("ᴄʟᴏꜱᴇ", callback_data="close_data")
-                    ]]
-                    reply_markup=InlineKeyboardMarkup(btn)
                     return await bot.send_cached_media(
                         chat_id=user_id,
                         file_id=file_id,
@@ -83,8 +78,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                             file_size=get_size(file_size),
                             duration=duration,
                             short_link=short_link
-                        ),
-                        reply_markup=reply_markup
+                        )
                     )
                 except FloodWait as e:
                     await asyncio.sleep(e.value)
