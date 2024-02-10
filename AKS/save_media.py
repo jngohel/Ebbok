@@ -115,8 +115,8 @@ async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message
             parse_mode=enums.ParseMode.MARKDOWN,
             reply_markup=reply_markup
         )
-        if user.get("batch_channel"):
-            for channel_id in user["batch_channel"]:
+        if user.get("channel_ids"):
+            for channel_id in user["channel_ids"]:
                await msg.copy(channel_id) 
     except Exception as err:
         print(err)
