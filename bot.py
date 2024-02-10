@@ -13,7 +13,7 @@ from AKS.send_file import send_media_and_reply, reply_forward, delete_after_dela
 from AKS.helpers import b64_to_str, str_to_b64, get_readable_time
 from AKS.check_user_status import handle_user_status
 from AKS.force_sub_handler import handle_force_sub, get_invite_link
-from AKS.broadcast_handlers import main_broadcast_handler
+from AKS.broadcast import users_broadcast
 from AKS.save_media import save_media_in_channel, save_batch_in_channel
 
 MediaList = {}
@@ -313,8 +313,8 @@ async def info(client, message):
         await message.reply_text(text, reply_markup=reply_markup)
 
 @Bot.on_message(filters.private & filters.command("broadcast") & filters.user(ADMINS) & filters.reply)
-async def broadcast_handler_open(_, m: Message):
-    await main_broadcast_handler(m, db)
+async def broadcast(_, m: Message):
+    await users_broadcast(m, db)
 
 @Bot.on_message(filters.private & filters.command("stats") & filters.user(ADMINS))
 async def sts(_, m: Message):
