@@ -78,7 +78,6 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
 async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message, linksList: list):
     try:
         userTemp = await db.get_user(edit_txt.reply_to_message.from_user.id)
-        targetChannel = userTemp.get("channel_id")
         batch = userTemp.get("batch_channel")
         fileCount = int(linksList[1]) - int(linksList[0])
         i = 1
@@ -115,8 +114,9 @@ async def save_batch_in_channel(bot: Client, message: Message, edit_txt: Message
             parse_mode=enums.ParseMode.MARKDOWN,
             reply_markup=reply_markup
         )
-        if userTemp and targetChannel:
-            await copyNeeded.copy(chat_id=int(targetChannel))
+        if userTemp.get("channel_ids"):
+            for channel_id in userTemp["channel_ids"]:
+               await copyNeeded.copy(channel_id) 
     except Exception as err:
         print(err)
         await edit_txt.edit_caption(
