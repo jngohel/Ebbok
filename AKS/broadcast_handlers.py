@@ -83,13 +83,13 @@ async def main_broadcast_handler(m, db):
     await out.delete()
     if failed == 0:
         await m.reply_text(
-            text=f"broadcast completed in `{completed_in}`\n\nTotal users - {total_users}.\nDone - {done}\n Success - {success}\nFailed - {failed}",
+            text=f"broadcast completed in `{completed_in}`\n\nTotal users - {total_users}\nDone - {done}\nSuccess - {success}\nFailed - {failed}",
             quote=True
         )
     else:
         await m.reply_document(
             document='broadcast.txt',
-            caption=f"broadcast completed in `{completed_in}`\n\nTotal users - {total_users}.\nDone - {done}\nSuccess - {success}\nFailed - {failed}",
+            caption=f"broadcast completed in `{completed_in}`\n\nTotal users - {total_users}\nDone - {done}\nSuccess - {success}\nFailed - {failed}",
             quote=True
         )
     await aiofiles.os.remove('broadcast.txt')
