@@ -68,7 +68,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     print(f"File info fetch error: {e}")
                     return
                 try:
-                    aks = await message.forward(BIN_CHANNEL)
+                    aks = await bot.forward_messages(BIN_CHANNEL)
                     aks_file = await bot.get_messages(BIN_CHANNEL, aks.id)
                     stream = f"https://{URL}/watch/{aks_file.id}{file_name}?hash={get_hash(aks_file)}"
                     btn=[[
@@ -95,7 +95,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     print(f"File send error: {e}")
                     print(traceback.format_exc())
             else:
-                aks = await message.forward(BIN_CHANNEL)
+                aks = await bot.forward_messages(BIN_CHANNEL)
                 aks_file = await bot.get_messages(BIN_CHANNEL, aks.id)
                 stream = f"https://{URL}/watch/{aks_file.id}{file_name}?hash={get_hash(aks_file)}"
                 btn=[[
