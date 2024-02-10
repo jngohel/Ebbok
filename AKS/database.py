@@ -83,10 +83,10 @@ class Database:
         new_value = {"$set": {"channel_id": channel_id}}
         await self.col.update_one(my_query, new_value, upsert=True)
 
-    async def remove_forward_channel(self, user_id):
+    async def remove_forward_channel(self, user_id, channel_ids):
         user_id = int(user_id)
         my_query = {"user_id": user_id}
-        new_value = {"$unset": {"channel_id": ""}}
+        new_value = {"$pullAll": {"channel_ids": channel_ids}}
         await self.col.update_one(my_query, new_value)
 
     async def custom_file_caption(self, user_id, caption):
