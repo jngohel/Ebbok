@@ -277,12 +277,17 @@ async def info(client, message):
             api = api_key + "[ᴅᴇꜰᴀᴜʟᴛ]"
         else:
             api = api_key
+        batch_channel = user.get('batch_channel')
+        if batch_channel:
+            batch = str(batch_channel)
+        else:
+            batch = "ɴᴏᴛ ꜱᴇᴛ"
         text = f"""📊 ꜱʜᴏʀᴛᴇɴᴇʀ - `{web}`
 ‼️ ᴀᴘɪ - `{api}`
 
 ♻️ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ - `{', '.join(map(str, user.get('channel_ids', [])))}`
 
-📥 ʙᴀᴛᴄʜ ᴄʜᴀɴɴᴇʟ - `{user.get('batch_channel')}`
+📥 ʙᴀᴛᴄʜ ᴄʜᴀɴɴᴇʟ - `{batch}`
 
 📝 ꜰɪʟᴇ ᴄᴀᴘᴛɪᴏɴ - `{user.get('caption')}`"""
         await message.reply_text(text, reply_markup=reply_markup)
