@@ -249,6 +249,15 @@ async def set_batch_channel(client, message):
     except Exception as e:
         await message.reply_text(f"<b>Error: <code>{e}</code></b>")
 
+@Bot.on_message(filters.command("remove_batch_channel") & filters.private)
+async def remove_batch_channel(client, message):
+    user_id = message.from_user.id
+    try:
+        await db.remove_batch_channel(user_id)
+        await message.reply_text("<b>ʏᴏᴜʀ ᴛᴀʀɢᴇᴛ ᴄʜᴀɴɴᴇʟ ɪᴅ ʀᴇᴍᴏᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ✅️</b>")
+    except Exception as e:
+        await message.reply_text(f"<b>Error: <code>{e}</code></b>")
+
 @Bot.on_message(filters.command('info') & filters.private)
 async def info(client, message):
     btn = [[
