@@ -29,5 +29,5 @@ class script(object):
     NEW_USER_TEXT = """#New_Users
 
 Name - {}
-Id - <code></code>
+Id - <code>{}</code>
 Bot - {}"""
