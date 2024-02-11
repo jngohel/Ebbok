@@ -3,12 +3,11 @@ import traceback
 import requests
 import string
 import random
-from info import DB_CHANNEL, FORWARD_AS_COPY, BOT_USERNAME, DELETE_TIME, BIN_CHANNEL, URL
+from info import DB_CHANNEL, FORWARD_AS_COPY, BOT_USERNAME, DELETE_TIME
 from pyrogram import Client
-from urllib.parse import quote_plus
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import Message 
 from pyrogram.errors import FloodWait
-from AKS.helpers import str_to_b64, get_readable_time, calc, get_size, get_hash, get_name
+from AKS.helpers import str_to_b64, get_readable_time, calc, get_size
 from AKS.database import db
 
 DLT_SCHEDULE = {}
@@ -69,17 +68,8 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     print(f"File info fetch error: {e}")
                     return
                 try:
-                    aks = await bot.forward_messages(
-                        chat_id=BIN_CHANNEL,
-                        from_chat_id=DB_CHANNEL,
-                        message_ids=file_id
-                    )
-                    aks_file = await bot.get_messages(BIN_CHANNEL, message_ids=aks.id)
-                    stream = f"https://{URL}/watch/{str(aks_file.id)}/{quote_plus(get_name(aks_file))}?hash={get_hash(aks_file)}"
-                    btn = [[
-                        InlineKeyboardButton("ꜱᴛʀᴇᴀᴍ ʟɪɴᴋ", url=stream)
-                    ]]
-                    reply_markup=InlineKeyboardMarkup(btn)
+                    file_er_id = str(file_id)
+                    share_link = f"https://telegram.me/{BOT_USERNAME}?start=Aks_{str_to_b64(file_er_id)}"
                     return await bot.send_cached_media(
                         chat_id=user_id,
                         file_id=file_id,
@@ -88,8 +78,7 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                             file_size=get_size(file_size),
                             duration=duration,
                             short_link=short_link
-                        ),
-                        reply_markup=reply_markup
+                        )
                     )
                 except FloodWait as e:
                     await asyncio.sleep(e.value)
@@ -98,16 +87,6 @@ async def media_forward(bot: Client, user_id: int, file_id: int):
                     print(f"File send error: {e}")
                     print(traceback.format_exc())
             else:
-                aks = await bot.forward_messages(
-                    chat_id=BIN_CHANNEL,
-                    from_chat_id=DB_CHANNEL,
-                    message_ids=file_id
-                )
-                aks_file = await bot.get_messages(BIN_CHANNEL, message_ids=aks.id)
-                stream = f"https://{URL}/watch/{str(aks_file.id)}/{quote_plus(get_name(aks_file))}?hash={get_hash(aks_file)}"
-                btn = [[
-                    InlineKeyboardButton("ꜱᴛʀᴇᴀᴍ ʟɪɴᴋ", url=stream)
-                ]]
                 return await bot.forward_messages(
                     chat_id=user_id,
                     from_chat_id=DB_CHANNEL,
