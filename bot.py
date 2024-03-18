@@ -174,11 +174,11 @@ async def main(bot: Client, message: Message):
         if OTHER_USERS_CAN_SAVE_FILE is False:
             return
 
-        if message.document and message.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
+        if message.document and message.document.thumbs and message.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
             thumb = message.document.thumbs[0] #fetch thumb
-        elif message.video and message.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
+        elif message.video and message.video.thumbs and message.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
             thumb = message.video.thumbs[0] #fetch thumb
-        elif message.audio and message.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
+        elif message.audio and message.audio.thumbs and message.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
             thumb = message.audio.thumbs[0] #fetch thumb
         else:
             thumb = None
