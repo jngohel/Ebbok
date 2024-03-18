@@ -181,11 +181,11 @@ async def main(bot: Client, message: Message):
         elif message.audio and message.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
             thumb = message.audio.thumbs[0] #fetch thumb
         else:
-            thumb = None #if file_type is not in ['document', 'video', 'audio']: assign None to thumb var
-        
+            thumb = None
+            
         if thumb is None:
             editTXT = await message.reply_photo(
-                photo="https://icon-library.com/images/png-file-icon/png-file-icon-6.jpg",
+                photo="https://graph.org/file/9fe40269b3a2c85e6fc99.jpg",
                 caption="<b>Please Wait...</b>",
                 quote=True,
                 parse_mode=enums.ParseMode.HTML
