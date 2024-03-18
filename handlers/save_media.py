@@ -29,8 +29,8 @@ async def forward_to_channel(bot: Client, message: Message, editable: Message):
 
 async def save_media_in_channel(bot: Client, editable: Message, message: Message):
     try:
-        msg = await editable.edit_caption(
-            caption="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
+        msg = await editable.edit_text(
+            text="<b>ᴘʀᴏᴄᴇꜱꜱɪɴɢ...</b>",
             parse_mode=enums.ParseMode.HTML
         )
         await asyncio.sleep(5)
@@ -58,7 +58,6 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
         share_link = f"https://telegram.me/{BOT_USERNAME}?start=VJBotz_{str_to_b64(file_er_id)}"
         short_link = await db.get_shortlink(user, share_link)
         caption = user.get('caption')
-        print(f"DEBUG: {caption}")
         default_caption = f"<b>ᴅᴏᴡɴʟᴏᴀᴅ ꜰᴀꜱᴛ ꜰʀᴏᴍ ʜᴇʀᴇ - {short_link}</b>"
         msg = caption.format(short_link=short_link, file_name=file_name, file_size=get_size(file_size), duration=duration) if caption else default_caption
         btn = [[
@@ -66,13 +65,13 @@ async def save_media_in_channel(bot: Client, editable: Message, message: Message
             InlineKeyboardButton("ꜱʜᴀʀᴇ ʟɪɴᴋ", url=short_link)
         ]]
         reply_markup = InlineKeyboardMarkup(btn)    
-        edited_thumb = await editable.edit_caption(
-            caption=msg,
+        aks_msg = await editable.edit_text(
+            text=msg,
             reply_markup=reply_markup
         )
         if user.get("channel_id"):
             channel_id = user["channel_id"]
-            await edited_thumb.copy(channel_id)
+            await aks_msg.copy(channel_id)
     except FloodWait as sl:
         if sl.value > 45:
             print(f"Sleep of {sl.value}s caused by FloodWait ...")
