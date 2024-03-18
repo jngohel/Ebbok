@@ -173,34 +173,14 @@ async def main(bot: Client, message: Message):
 
         if OTHER_USERS_CAN_SAVE_FILE is False:
             return
-
-        if message.document and message.document.thumbs and message.document.thumbs[0]: #check if the file is document and if it has thumbnail or not
-            thumb = message.document.thumbs[0] #fetch thumb
-        elif message.video and message.video.thumbs and message.video.thumbs[0]: #check if the file is video and if it has thumbnail or not
-            thumb = message.video.thumbs[0] #fetch thumb
-        elif message.audio and message.audio.thumbs and message.audio.thumbs[0]: #check if the file is audio and if it has thumbnail or not
-            thumb = message.audio.thumbs[0] #fetch thumb
-        else:
-            thumb = None
-            
-        if thumb is None:
-            editTXT = await message.reply_photo(
-                photo="https://graph.org/file/9fe40269b3a2c85e6fc99.jpg",
-                caption="<b>Please Wait...</b>",
-                quote=True,
-                parse_mode=enums.ParseMode.HTML
-            )
-            await save_media_in_channel(bot, editTXT, message)
-        else:
-            thumb_jpg = await bot.download_media(thumb) #download thumb to current working dir
-            editTXT = await message.reply_photo(
-                photo=thumb_jpg,
-                caption="<b>Please Wait...</b>",
-                quote=True,
-                parse_mode=enums.ParseMode.HTML
-            )
-            await save_media_in_channel(bot, editTXT, message)
-            os.remove(thumb_jpg) #remove thumb from current working dir
+    
+        editTXT = await message.reply_text(
+            text="<b>Please Wait...</b>",
+            quote=True,
+            parse_mode=enums.ParseMode.HTML
+        )
+        await save_media_in_channel(bot, editTXT, message)
+    
     elif message.chat.type == enums.ChatType.CHANNEL:
         if (message.chat.id == int(LOG_CHANNEL)) or (message.chat.id == int(AUTH_CHANNEL)) or message.forward_from_chat or message.forward_from:
             return
